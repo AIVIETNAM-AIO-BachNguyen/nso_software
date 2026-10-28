@@ -1,4 +1,6 @@
 .venv/
+.venv312/
+.runtime/
 __pycache__/
 .pytest_cache/
 *.pyc
@@ -10,3 +12,7 @@ src/frontend/.env.local
 *.db
 *.db-shm
 *.db-wal
+*.backup.json
+.env.staging
+coverage.xml
+.coverage

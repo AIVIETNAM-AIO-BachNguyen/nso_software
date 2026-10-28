@@ -25,6 +25,9 @@ with a type tag, so the shape a caller gets back is the shape it stored.
 from __future__ import annotations
 
 import json
+import copy
+from contextlib import contextmanager
+from functools import wraps
 import os
 import sqlite3
 import threading
@@ -45,6 +48,14 @@ from ..recipe import (
 )
 
 JOB_SERIAL_COUNTER = "job_serial"
+
+
+def synchronized(method):
+    @wraps(method)
+    def call(self, *args, **kwargs):
+        with self._lock:
+            return method(self, *args, **kwargs)
+    return call
 
 
 # --------------------------------------------------------------------------- #
@@ -110,12 +121,14 @@ class DesignStore(Protocol):
     def has(self, design_id: str) -> bool: ...
     def next_job_serial(self) -> int: ...
     def put_record(self, domain: str, record_id: str, payload: Dict[str, Any]) -> None: ...
+    def put_records_atomic(self, records: list) -> None: ...
     def get_record(self, domain: str, record_id: str) -> Dict[str, Any]: ...
     def list_records(self, domain: str) -> list[Dict[str, Any]]: ...
     def append_related(self, domain: str, object_id: str, payload: Dict[str, Any]) -> str: ...
     def related(self, domain: str, object_id: str) -> list[Dict[str, Any]]: ...
     def append_audit(self, payload: Dict[str, Any]) -> str: ...
     def audits(self, object_id: Optional[str] = None) -> list[Dict[str, Any]]: ...
+    def transaction(self): ...
 
 
 class InMemoryDesignStore:
@@ -132,8 +145,24 @@ class InMemoryDesignStore:
         self._related: Dict[tuple[str, str], list[Dict[str, Any]]] = {}
         self._audits: list[Dict[str, Any]] = []
         self._serial = get_config().job_serial_start - 1
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
+    @contextmanager
+    def transaction(self):
+        with self._lock:
+            names = ("_data", "_records", "_related", "_audits", "_serial", "_v3_operations", "_v3_leases")
+            state = {name: copy.deepcopy(getattr(self, name)) for name in names if hasattr(self, name)}
+            try:
+                yield self
+            except BaseException:
+                for name in names:
+                    if name in state:
+                        setattr(self, name, state[name])
+                    elif hasattr(self, name):
+                        delattr(self, name)
+                raise
+
+    @synchronized
     def put(self, design_id: str, payload: Dict[str, Any]) -> None:
         if design_id in self._data:
             if dumps_entry(self._data[design_id]) != dumps_entry(payload):
@@ -141,11 +170,13 @@ class InMemoryDesignStore:
             return
         self._data[design_id] = loads_entry(dumps_entry(payload))
 
+    @synchronized
     def get(self, design_id: str) -> Dict[str, Any]:
         if design_id not in self._data:
             raise KeyError(design_id)
         return loads_entry(dumps_entry(self._data[design_id]))
 
+    @synchronized
     def has(self, design_id: str) -> bool:
         return design_id in self._data
 
@@ -154,6 +185,7 @@ class InMemoryDesignStore:
             self._serial += 1
             return self._serial
 
+    @synchronized
     def put_record(self, domain: str, record_id: str, payload: Dict[str, Any]) -> None:
         key = (domain, record_id)
         if key in self._records:
@@ -162,12 +194,23 @@ class InMemoryDesignStore:
             return
         self._records[key] = loads_entry(dumps_entry(payload))
 
+    @synchronized
     def get_record(self, domain: str, record_id: str) -> Dict[str, Any]:
         try:
             return loads_entry(dumps_entry(self._records[(domain, record_id)]))
         except KeyError:
             raise KeyError(record_id) from None
 
+    def put_records_atomic(self, records: list) -> None:
+        with self._lock:
+            for domain, record_id, payload in records:
+                existing = self._records.get((domain, record_id))
+                if existing is not None and dumps_entry(existing) != dumps_entry(payload):
+                    raise ValueError("immutable batch conflicts with an existing record")
+            for domain, record_id, payload in records:
+                self._records[(domain, record_id)] = loads_entry(dumps_entry(payload))
+
+    @synchronized
     def list_records(self, domain: str) -> list[Dict[str, Any]]:
         return [
             loads_entry(dumps_entry(payload))
@@ -175,6 +218,7 @@ class InMemoryDesignStore:
             if record_domain == domain
         ]
 
+    @synchronized
     def append_related(self, domain: str, object_id: str, payload: Dict[str, Any]) -> str:
         record_id = payload.get("record_id") or uuid.uuid4().hex
         record = {**payload, "record_id": record_id}
@@ -183,12 +227,14 @@ class InMemoryDesignStore:
         )
         return record_id
 
+    @synchronized
     def related(self, domain: str, object_id: str) -> list[Dict[str, Any]]:
         return [
             loads_entry(dumps_entry(record))
             for record in self._related.get((domain, object_id), ())
         ]
 
+    @synchronized
     def append_audit(self, payload: Dict[str, Any]) -> str:
         event_id = payload.get("event_id") or uuid.uuid4().hex
         self._audits.append(
@@ -196,6 +242,7 @@ class InMemoryDesignStore:
         )
         return event_id
 
+    @synchronized
     def audits(self, object_id: Optional[str] = None) -> list[Dict[str, Any]]:
         return [dict(x) for x in self._audits if object_id is None or x.get("object_id") == object_id]
 
@@ -208,6 +255,22 @@ class InMemoryDesignStore:
 # dialect-specific types. Kept as one definition so the two backends cannot
 # drift into different schemas.
 SCHEMA = (
+    """
+    CREATE TABLE IF NOT EXISTS v3_job_leases (
+        job_id TEXT PRIMARY KEY,
+        owner TEXT NOT NULL,
+        expires_at DOUBLE PRECISION NOT NULL
+    )
+    """,
+    # V3 request receipts are additive. Existing V2 tables/records are untouched.
+    """
+    CREATE TABLE IF NOT EXISTS v3_operations (
+        operation_id TEXT PRIMARY KEY,
+        fingerprint TEXT NOT NULL,
+        status_code INTEGER,
+        response TEXT
+    )
+    """,
     """
     CREATE TABLE IF NOT EXISTS designs (
         design_id   TEXT PRIMARY KEY,
@@ -257,14 +320,37 @@ class SqlDesignStore:
     #: DB-API paramstyle marker: "?" for sqlite3, "%s" for psycopg.
     placeholder = "?"
 
-    def _connect(self):                                   # pragma: no cover
+    def _raw_connect(self):                               # pragma: no cover
         raise NotImplementedError
+
+    def _connect(self):
+        current = getattr(self._transaction_local, "connection", None)
+        return _TransactionLoan(current) if current is not None else self._raw_connect()
+
+    @contextmanager
+    def transaction(self):
+        if getattr(self._transaction_local, "connection", None) is not None:
+            yield self
+            return
+        with self._raw_connect() as conn:
+            self._transaction_local.connection = conn
+            try:
+                if self.placeholder == "%s":
+                    conn.cursor().execute("SELECT value FROM counters WHERE name = 'v3_transaction_guard' FOR UPDATE")
+                yield self
+                conn.commit()
+            except BaseException:
+                conn.rollback()
+                raise
+            finally:
+                del self._transaction_local.connection
 
     # -- helpers --------------------------------------------------------- #
     def _sql(self, statement: str) -> str:
         return statement.replace("?", self.placeholder)
 
     def _init_schema(self) -> None:
+        self._transaction_local = threading.local()
         with self._connect() as conn:
             cur = conn.cursor()
             for statement in SCHEMA:
@@ -276,6 +362,8 @@ class SqlDesignStore:
                 ),
                 (JOB_SERIAL_COUNTER, get_config().job_serial_start - 1),
             )
+            cur.execute(self._sql("INSERT INTO counters (name, value) VALUES (?, ?) ON CONFLICT (name) DO NOTHING"),
+                        ("v3_transaction_guard", 0))
             conn.commit()
 
     # -- DesignStore ----------------------------------------------------- #
@@ -363,6 +451,27 @@ class SqlDesignStore:
             raise KeyError(record_id)
         return loads_entry(row[0])
 
+    def put_records_atomic(self, records: list) -> None:
+        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        with self._connect() as conn:
+            try:
+                for domain, record_id, payload in records:
+                    blob = dumps_entry(payload)
+                    cur = conn.cursor()
+                    cur.execute(self._sql(
+                        "INSERT INTO domain_records (domain, record_id, payload, created_at) "
+                        "VALUES (?, ?, ?, ?) ON CONFLICT (domain, record_id) DO NOTHING"),
+                        (domain, record_id, blob, now))
+                    stored = cur.execute(self._sql(
+                        "SELECT payload FROM domain_records WHERE domain = ? AND record_id = ?"),
+                        (domain, record_id)).fetchone()
+                    if stored[0] != blob:
+                        raise ValueError("immutable batch conflicts with an existing record")
+                conn.commit()
+            except Exception:
+                conn.rollback()
+                raise
+
     def list_records(self, domain: str) -> list[Dict[str, Any]]:
         with self._connect() as conn:
             rows = conn.cursor().execute(
@@ -443,7 +552,7 @@ class SQLiteDesignStore(SqlDesignStore):
             self._shared = sqlite3.connect(self.path, check_same_thread=False)
         self._init_schema()
 
-    def _connect(self):
+    def _raw_connect(self):
         if self._shared is not None:
             return _NonClosing(self._shared)
         conn = sqlite3.connect(self.path, timeout=30, isolation_level=None)
@@ -470,6 +579,18 @@ class _NonClosing:
         return getattr(self._conn, name)
 
 
+class _TransactionLoan(_NonClosing):
+    """Nested store helpers borrow the outer transaction without committing it."""
+    def __enter__(self):
+        return self
+
+    def commit(self):
+        pass
+
+    def rollback(self):
+        pass
+
+
 class PostgresDesignStore(SqlDesignStore):
     """Postgres backend — the intended production store.
 
@@ -487,7 +608,7 @@ class PostgresDesignStore(SqlDesignStore):
         self.dsn = dsn
         self._init_schema()
 
-    def _connect(self):
+    def _raw_connect(self):
         try:
             import psycopg                                 # type: ignore
         except ImportError:                                # pragma: no cover

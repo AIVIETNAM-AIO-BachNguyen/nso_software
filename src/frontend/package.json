@@ -3,14 +3,24 @@
   "version": "0.3.0",
   "private": true,
   "scripts": {
+    "test": "node --test tests/*.test.cjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "14.2.5",
+    "next": "15.5.28",
     "react": "18.3.1",
     "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.12",
+    "react-test-renderer": "^18.3.1"
+  },
+  "overrides": {
+    "postcss": "8.5.31",
+    "nanoid": "3.3.18",
+    "source-map-js": "1.2.2"
   }
 }

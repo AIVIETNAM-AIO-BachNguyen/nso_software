@@ -1,0 +1,129 @@
+{
+  "synthetic_only": true,
+  "python": "3.12.16",
+  "status": "PASS",
+  "http_checks": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/ready",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/cases",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/predict",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/demo/study",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/demo/study",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/demo/optics",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/demo/training",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/models/policies",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/models/train",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/models/training/TR3-FA1DB090B09D44A7BD0768EB",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/models/training/TR3-FA1DB090B09D44A7BD0768EB",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/releases/review",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/releases/deploy",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/npm/predict",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/outcomes/evaluate",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/optimizer/envelopes",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/optimizer/run",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/optimizer/OPT-946DA98797994312AD290263",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/optimizer/OPT-946DA98797994312AD290263",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/designs/approve",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/operations",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/releases/review",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/npm/predict",
+      "status": 409
+    }
+  ],
+  "browser_checked": false,
+  "clinical_use_allowed": false
+}

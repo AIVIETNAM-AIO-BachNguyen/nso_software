@@ -162,6 +162,13 @@ class ClinicalDigitalThread:
         for laterality in sorted(LATERALITIES):
             eye_id = _stable("EYE", {"patient_id": patient_id, "laterality": laterality})
             eye_ids[laterality] = eye_id
+            try:
+                existing = self.store.get_record("eye", eye_id)
+                if existing["patient_id"] != patient_id or existing["laterality"] != laterality:
+                    raise EngineeringError("existing eye identity conflicts with patient")
+                continue
+            except KeyError:
+                pass
             self._put("eye", eye_id, {
                 "eye_id": eye_id,
                 "patient_id": patient_id,
@@ -325,6 +332,7 @@ class ClinicalDigitalThread:
         self, *, recipe_version_id: str, lot_code: str,
         material_code: str, process_version: str, manufacturer_id: str,
         facility_id: str, actor: str = "manufacturing_engineer",
+        research_context: Dict[str, Any] | None = None,
     ) -> Dict[str, Any]:
         recipe_version = self.store.get_record("recipe_version", recipe_version_id)
         lot_id = _opaque("LOT")
@@ -341,6 +349,9 @@ class ClinicalDigitalThread:
             "status": "MANUFACTURED",
             "created_at": _now(),
         }
+        if research_context is not None:
+            record["research_context"] = research_context
+            record["status"] = "SIMULATED" if research_context.get("mode") == "synthetic_rehearsal" else "RESEARCH_RECORDED"
         self._put("manufacturing_lot", lot_id, record)
         self._audit("MANUFACTURING_LOT_CREATED", "manufacturing_lot", lot_id, actor=actor)
         return record

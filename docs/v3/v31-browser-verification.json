@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-28",
+  "url": "http://127.0.0.1:3000/research",
+  "synthetic_only": true,
+  "browser_interaction": true,
+  "checks": [
+    {
+      "name": "Research session sign-in and role-filtered workbench",
+      "status": "PASS"
+    },
+    {
+      "name": "Manufacturing trace linked recipe/lot/QC/exposure/outcome",
+      "status": "PASS"
+    },
+    {
+      "name": "Adaptive model monitoring shown on screen",
+      "status": "PASS"
+    },
+    {
+      "name": "Workflow JSON uploaded through native browser chooser",
+      "status": "PASS"
+    },
+    {
+      "name": "Withdrawn model displays APPROVAL_WITHDRAWN on submit",
+      "status": "PASS"
+    },
+    {
+      "name": "Changing eye clears the prior result panel",
+      "status": "PASS"
+    }
+  ],
+  "coverage_limit": "Focused functional checks in the available browser window; not exhaustive mobile/accessibility certification.",
+  "screenshot": "v31-browser-monitor.png",
+  "credentials_saved_in_report": false,
+  "viewport_check": {
+    "viewport_width": 592,
+    "document_width": 592,
+    "horizontal_overflow": false
+  }
+}

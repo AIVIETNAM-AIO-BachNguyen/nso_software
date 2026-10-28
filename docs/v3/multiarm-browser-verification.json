@@ -1,0 +1,17 @@
+{
+  "checked_on": "2026-10-28/29",
+  "synthetic_only": true,
+  "checks": [
+    "Complete three-arm ranking visible with all three support counts/ESS",
+    "Partial ranking labels unsupported arm and excludes its score",
+    "Unsupported comparator shows ranking abstained",
+    "Design analysis shows history/history+arm/history+arm+design held-out tables",
+    "Synthetic research labels and noncausal interpretation visible"
+  ],
+  "evidence": [
+    "multiarm-browser-ranking.png",
+    "multiarm-browser-design-value.png"
+  ],
+  "limitation": "Focused browser checks completed before final pre-index-QC-only backend fix. Browser use was disabled in Work settings on the final recheck; final source verified with backend tests and HTTP. No mobile/accessibility certification.",
+  "credentials_saved": false
+}

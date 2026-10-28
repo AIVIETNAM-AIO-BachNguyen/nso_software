@@ -151,6 +151,11 @@ def run_fitting(
     pair_label = pair_class(od_recipe, os_recipe)
     patient_snapshot = asdict(p)
     patient_id = patient_id or _stable_id("PAT", patient_snapshot)
+    try:
+        existing_patient = REGISTRY._store_impl.get_record("patient", patient_id)
+        site = site or existing_patient.get("site_id")
+    except KeyError:
+        existing_patient = None
     clinical_dataset_id = clinical_dataset_id or _stable_id(
         "CDS", {"patient_id": patient_id, "input": patient_snapshot}
     )
@@ -401,7 +406,7 @@ def run_fitting(
         "site": site or cfg.default_site,
         "candidates": per_eye,
     }
-    patient_created = REGISTRY._record_domain(
+    patient_created = False if existing_patient is not None else REGISTRY._record_domain(
         "patient", patient_id, {"patient_id": patient_id, "site_id": site or cfg.default_site}
     )
     dataset_created = REGISTRY._record_domain("clinical_dataset", clinical_dataset_id, {
@@ -415,9 +420,14 @@ def run_fitting(
         )
     eye_ids = {eye: _stable_id("EYE", {"patient_id": patient_id, "laterality": eye}) for eye in ("OD", "OS")}
     for eye, eye_id in eye_ids.items():
-        REGISTRY._record_domain("eye", eye_id, {
-            "eye_id": eye_id, "patient_id": patient_id, "laterality": eye,
-        })
+        try:
+            existing_eye = REGISTRY._store_impl.get_record("eye", eye_id)
+            if existing_eye["patient_id"] != patient_id or existing_eye["laterality"] != eye:
+                raise ValueError("existing eye identity conflicts with patient")
+        except KeyError:
+            REGISTRY._record_domain("eye", eye_id, {
+                "eye_id": eye_id, "patient_id": patient_id, "laterality": eye,
+            })
     thread = ClinicalDigitalThread(REGISTRY._store_impl)
     case = thread.create_case(
         patient_id=patient_id,

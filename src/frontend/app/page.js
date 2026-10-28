@@ -103,6 +103,12 @@ const CSF_SCALES = ["index_0_100", "log_cs"];
 
 export default function Page() {
   const [step, setStep] = useState(1);
+  const [authRequired, setAuthRequired] = useState(true);
+  const [accessCode, setAccessCode] = useState("");
+  const [clinicalSession, setClinicalSession] = useState("");
+  const [assignedPatients, setAssignedPatients] = useState([]);
+  const [selectedPatient, setSelectedPatient] = useState("");
+  const requestHeaders = () => ({ "Content-Type": "application/json", ...(clinicalSession ? { Authorization: `Bearer ${clinicalSession}` } : {}) });
   const [inp, setInp] = useState(DEFAULTS);
   const [advOpen, setAdvOpen] = useState(false);
   const [resOpen, setResOpen] = useState(false);
@@ -126,6 +132,7 @@ export default function Page() {
     baselineDate: "2026-01-01", followupDate: "2026-07-01",
     baselineCsf: "", currentCsf: "", adverseEvent: "", intolerance: "",
   });
+  const followupDefaults = useRef(fu);
   const [fuRes, setFuRes] = useState(null);
   const [fuPending, setFuPending] = useState(false);
   const followupRequest = useRef(0);
@@ -134,9 +141,27 @@ export default function Page() {
   // impact of a sleeping server without sending any patient data.
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`${API}/api/health`, { cache: "no-store", signal: controller.signal }).catch(() => {});
+    fetch(`${API}/api/health`, { cache: "no-store", signal: controller.signal })
+      .then(r=>r.json()).then(data=>setAuthRequired(data.authentication_required !== false)).catch(() => {});
     return () => controller.abort();
   }, []);
+
+  function clearClinicalData() {
+    followupRequest.current += 1;
+    setInp(DEFAULTS); setAdv(ADV_DEFAULTS); setRes(RESEARCH_DEFAULTS); setFu(followupDefaults.current);
+    setPred(null); setJob(null); setApproval(null); setFuRes(null); setStep(1);
+  }
+  function closeClinicalSession() {
+    setClinicalSession(""); setAssignedPatients([]); setSelectedPatient(""); clearClinicalData();
+  }
+  useEffect(() => {
+    if (!clinicalSession) return;
+    let timer;
+    const touch = () => { clearTimeout(timer); timer = setTimeout(closeClinicalSession,15*60*1000); };
+    touch(); window.addEventListener("pointerdown",touch); window.addEventListener("keydown",touch);
+    return () => { clearTimeout(timer);window.removeEventListener("pointerdown",touch);window.removeEventListener("keydown",touch); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[clinicalSession]);
 
   const set = (k) => (e) => setInp({ ...inp, [k]: e.target.value });
   const setA = (k) => (e) => setAdv({ ...adv, [k]: e.target.value });
@@ -144,7 +169,7 @@ export default function Page() {
 
   function predictBody() {
     return {
-      patient_id: pred?.patient_id || null,
+      patient_id: selectedPatient || pred?.patient_id || null,
       age: num(inp.age),
       od: {
         sphere: num(inp.odSphere), cylinder: num(inp.odCyl), axis: num(inp.odAxis),
@@ -224,7 +249,7 @@ export default function Page() {
   async function downloadPdf(path, body, filename) {
     try {
       const r = await fetch(`${API}${path}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+        method: "POST", headers: requestHeaders(), body: JSON.stringify(body),
       });
       if (!r.ok) throw new Error(`API error ${r.status}`);
       const blob = await r.blob();
@@ -282,7 +307,7 @@ export default function Page() {
     }, 10000);
     try {
       const r = await fetch(`${API}/api/predict`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", headers: requestHeaders(),
         body: JSON.stringify(predictBody()),
       });
       if (!r.ok) throw new Error(`API error ${r.status}`);
@@ -307,7 +332,7 @@ export default function Page() {
     setErr(null);
     try {
       const r = await fetch(`${API}/api/design/approve`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", headers: requestHeaders(),
         body: JSON.stringify({ design_id: pred.design_id }),
       });
       if (!r.ok) throw new Error(`API error ${r.status}`);
@@ -325,7 +350,7 @@ export default function Page() {
     setErr(null);
     try {
       const r = await fetch(`${API}/api/manufacturing/submit`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", headers: requestHeaders(),
         body: JSON.stringify({ design_id: pred.design_id }),
       });
       if (!r.ok) throw new Error(`API error ${r.status}`);
@@ -344,7 +369,7 @@ export default function Page() {
     try {
       const useOd = !fuRes || fuRes.eyes.OD.annualized_delta_al >= fuRes.eyes.OS.annualized_delta_al;
       const r = await fetch(`${API}/api/refit`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", headers: requestHeaders(),
         body: JSON.stringify({
           ...predictBody(),
           previous_design_id: pred.design_id,
@@ -371,10 +396,10 @@ export default function Page() {
     setFuPending(true);
     try {
       const r = await fetch(`${API}/api/followup`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", headers: requestHeaders(),
         body: JSON.stringify({
           design_id: pred?.design_id,
-          patient_id: pred?.patient_id,
+          patient_id: selectedPatient || pred?.patient_id,
           baseline_od_al: num(s.baselineOd), followup_od_al: num(s.followupOd),
           baseline_os_al: num(s.baselineOs), followup_os_al: num(s.followupOs),
           interval_months: Math.round(num(s.interval)),
@@ -427,9 +452,16 @@ export default function Page() {
         </div>
       </div>
 
-      {err && <div className="err">{err}</div>}
+      <div className="research-entry"><a href="/research">V3 research workspace →</a><span>Longitudinal forecasts, intervention studies & optical research</span></div>
 
-      {step === 1 && (
+      {authRequired && <section className="card research-session">
+        {!clinicalSession ? <form onSubmit={async e=>{e.preventDefault();try{const response=await fetch(`${API}/api/v3/cases`,{headers:{Authorization:`Bearer ${accessCode}`},cache:"no-store"});const data=await response.json();if(!response.ok)throw new Error(data.detail?.message || "Access was not authorized");setAssignedPatients([...new Set(data.cases.map(c=>c.patient_id))]);setSelectedPatient(data.cases[0]?.patient_id || "");setClinicalSession(accessCode);setAccessCode("");setErr(null);}catch(error){setErr(error.message);}}}>
+          <label className="field">Clinical session access code<input type="password" autoComplete="off" required value={accessCode} onChange={e=>setAccessCode(e.target.value)} /></label><button className="btn btn-primary">Connect assigned patients</button>
+        </form> : <><label className="field">Assigned patient<select value={selectedPatient} disabled={loading || submitting || fuPending} onChange={e=>{setSelectedPatient(e.target.value);clearClinicalData();}}>{assignedPatients.map(p=><option key={p}>{p}</option>)}</select></label><button className="btn btn-ghost" onClick={closeClinicalSession}>Disconnect</button></>}
+      </section>}
+      {err && <div className="err" role="alert">{err}</div>}
+
+      {(!authRequired || (clinicalSession && selectedPatient)) && step === 1 && (
         <Screen1
           inp={inp} set={set} setInp={setInp}
           adv={adv} setA={setA} setAdv={setAdv} advOpen={advOpen} setAdvOpen={setAdvOpen}
@@ -438,14 +470,14 @@ export default function Page() {
           elapsedSeconds={elapsedSeconds} run={runPredict}
           go={(i) => (i === 2 ? goFollowup() : i === 1 && pred && setStep(2))} />
       )}
-      {step === 2 && pred && (
+      {(!authRequired || clinicalSession) && step === 2 && pred && (
         <Screen2 pred={pred} job={job} approval={approval} submitting={submitting}
           onApprove={approveDesign}
           onSubmit={submitToManufacturing}
           go={(i) => (i === 0 ? setStep(1) : i === 2 ? goFollowup() : null)}
           onFollowup={goFollowup} onExport={exportPrediction} />
       )}
-      {step === 3 && (
+      {(!authRequired || clinicalSession) && step === 3 && (
         <Screen3 fu={fu} setFuVal={setFuVal} res={fuRes} pending={fuPending}
           designId={pred?.design_id} onDownload={downloadFollowupReport}
           onRefit={runRefit} canRefit={!!pred} refitting={submitting}

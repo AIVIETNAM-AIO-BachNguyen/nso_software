@@ -44,10 +44,18 @@ app = FastAPI(
     openapi_url=None if _is_production else "/openapi.json",
 )
 
+# Additive V3 research APIs; V2 fitting contracts and engine remain versioned separately.
+from research_api import router as research_router
+import research_workflows_api  # registers the additional governed workflows  # noqa: F401
+import research_operations_api  # noqa: F401
+import research_extension_api  # noqa: F401
+import research_demo_api  # noqa: F401
+app.include_router(research_router)
+
 # CORS: allow any *.vercel.app (production + preview deploys) and localhost.
 # For a custom domain later, add it via ALLOWED_ORIGINS (comma-separated).
 _prod_origins = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()]
-_origin_regex = r"https://([a-z0-9-]+\.)*vercel\.app|http://(localhost|127\.0\.0\.1)(:\d+)?"
+_origin_regex = None if _is_production else r"http://(localhost|127\.0\.0\.1)(:\d+)?"
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_prod_origins,
@@ -82,10 +90,26 @@ VENDOR_KEYS = _vendor_keys()
 async def add_processing_time(request, call_next):
     """Expose coarse request timing without exposing internal pipeline details."""
     started = time.perf_counter()
+    from nso.research_security import legacy_access, request_limit, log_legacy_access
+    blocked = request_limit(request)
+    if blocked is not None:
+        log_legacy_access(request, blocked.status_code)
+        return blocked
+    blocked = await legacy_access(request)
+    if blocked is not None:
+        log_legacy_access(request, blocked.status_code)
+        return blocked
     response = await call_next(request)
     elapsed_ms = (time.perf_counter() - started) * 1000
     response.headers["Server-Timing"] = f"app;dur={elapsed_ms:.1f}"
     response.headers["X-NSO-Processing-Ms"] = f"{elapsed_ms:.1f}"
+    if request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store"
+    log_legacy_access(request, response.status_code)
+    if request.url.path.startswith("/api/v3/"):
+        response.headers["Cache-Control"] = "no-store"
+        from research_api import audit_access
+        audit_access(request, response.status_code)
     return response
 
 
@@ -106,9 +130,13 @@ def _authorize_vendor(api_key: str, segment: str) -> str:
 
 @app.get("/api/health")
 def health():
+    if os.getenv("NSO_ENV", "development").lower() == "production" and v2.REGISTRY.backend == "InMemoryDesignStore":
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"status":"not_ready", "reason":"A durable SQL database is required in production"},status_code=503)
     predictor = v2.get_predictor()
     return {
         "status": "ok",
+        "authentication_required": os.getenv("NSO_ENV", "development").lower() == "production",
         "version": "2.2",
         "engine": predictor.name,
         "predictor_version": predictor.version,

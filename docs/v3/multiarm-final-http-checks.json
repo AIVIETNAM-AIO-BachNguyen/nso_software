@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "route": "design-analysis",
+      "status": 200,
+      "synthetic_label": true
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "assets_checked": 7,
+      "all_assets_200": true
+    },
+    {
+      "route": "/research",
+      "status": 200,
+      "assets_checked": 7,
+      "all_assets_200": true
+    }
+  ],
+  "credentials_saved": false
+}

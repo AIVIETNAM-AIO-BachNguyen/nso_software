@@ -1,6 +1,7 @@
 numpy>=1.24
 pandas>=2.0
-fastapi>=0.110
+# Keep the API/router contract on the tested FastAPI minor during the Python migration.
+fastapi>=0.128.8,<0.129
 uvicorn[standard]>=0.27
 reportlab>=4.0
 pytest>=8.0

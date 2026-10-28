@@ -1,0 +1,4134 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NSO V3 Research API",
+    "version": "3.0.0-research.1"
+  },
+  "paths": {
+    "/api/v3/health": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_v3_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/research": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Research Info",
+        "operationId": "research_info_api_v3_research_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/npm/health": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Npm Health",
+        "operationId": "npm_health_api_v3_npm_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/ipm/health": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Ipm Health",
+        "operationId": "ipm_health_api_v3_ipm_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/optimizer/health": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Optimizer Health",
+        "operationId": "optimizer_health_api_v3_optimizer_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/cases": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Cases",
+        "operationId": "cases_api_v3_cases_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v3/session": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Session Details",
+        "operationId": "session_details_api_v3_session_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v3/cases/{case_id}/observations": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Observations",
+        "operationId": "observations_api_v3_cases__case_id__observations_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          },
+          {
+            "name": "eye",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Eye"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/observations": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Ingest",
+        "operationId": "ingest_api_v3_observations_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObservationBatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/exposures": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Exposure",
+        "operationId": "exposure_api_v3_exposures_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Exposure"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/npm/predict": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Predict",
+        "operationId": "predict_api_v3_npm_predict_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Forecast"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/outcomes/evaluate": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Evaluate",
+        "operationId": "evaluate_api_v3_outcomes_evaluate_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Outcome"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/ipm/cohorts": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Cohort",
+        "operationId": "cohort_api_v3_ipm_cohorts_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cohort"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/ipm/estimate": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Estimate",
+        "operationId": "estimate_api_v3_ipm_estimate_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Estimate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/optimizer/run": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Optimizer",
+        "operationId": "optimizer_api_v3_optimizer_run_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Optimization"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptimizationQueued"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/optimizer/{run_id}": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Optimizer Result",
+        "operationId": "optimizer_result_api_v3_optimizer__run_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptimizationState"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/designs/approve": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Approve",
+        "operationId": "approve_api_v3_designs_approve_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DesignApproval"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/models/validate": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Validate",
+        "operationId": "validate_api_v3_models_validate_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Validation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/cases/{case_id}/trace": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Trace",
+        "operationId": "trace_api_v3_cases__case_id__trace_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/demo/npm": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Demo",
+        "description": "A fixed synthetic fixture; accepts only eye/model/horizon, never patient data.",
+        "operationId": "demo_api_v3_demo_npm_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Inp"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/observations/correct": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Correction",
+        "operationId": "correction_api_v3_observations_correct_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Correction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/studies/protocols": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Protocol",
+        "operationId": "protocol_api_v3_studies_protocols_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Protocol"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/studies/enrollments": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Enrollment",
+        "operationId": "enrollment_api_v3_studies_enrollments_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Enrollment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/studies/events": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Study Event",
+        "operationId": "study_event_api_v3_studies_events_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/ipm/analyze": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Causal",
+        "operationId": "causal_api_v3_ipm_analyze_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CausalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/studies/events/resolve": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Event Resolution",
+        "operationId": "event_resolution_api_v3_studies_events_resolve_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventResolution"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/models/policies": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Release Policy",
+        "operationId": "release_policy_api_v3_models_policies_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleasePolicy"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/models/train": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Train",
+        "operationId": "train_api_v3_models_train_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/models/training/{run_id}": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Training Status",
+        "operationId": "training_status_api_v3_models_training__run_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/models/available": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Models",
+        "operationId": "models_api_v3_models_available_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v3/optimizer/envelopes": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Envelope",
+        "operationId": "envelope_api_v3_optimizer_envelopes_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Envelope"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/optimizer/calibrations": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Calibration",
+        "operationId": "calibration_api_v3_optimizer_calibrations_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalibrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/releases/review": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Approve",
+        "operationId": "approve_api_v3_releases_review_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Review"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/releases/deploy": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Promote",
+        "operationId": "promote_api_v3_releases_deploy_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Deployment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/releases/rollback": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Restore",
+        "operationId": "restore_api_v3_releases_rollback_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Rollback"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/ready": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Readiness",
+        "operationId": "readiness_api_v3_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v3/operations": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Operations",
+        "operationId": "operations_api_v3_operations_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v3/demo/study": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Study Demo",
+        "operationId": "study_demo_api_v3_demo_study_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyDemo"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/demo/optics": {
+      "post": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Optical Demo",
+        "operationId": "optical_demo_api_v3_demo_optics_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpticalDemo"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/demo/training": {
+      "get": {
+        "tags": [
+          "V3 research"
+        ],
+        "summary": "Training Demo",
+        "operationId": "training_demo_api_v3_demo_training_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BenchmarkSample": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "split": {
+            "type": "string",
+            "enum": [
+              "train",
+              "validation",
+              "test",
+              "external"
+            ],
+            "title": "Split"
+          },
+          "site_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Site Id"
+          },
+          "index_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Index Date"
+          },
+          "untreated_history_confirmed": {
+            "type": "boolean",
+            "title": "Untreated History Confirmed"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/Observation"
+            },
+            "type": "array",
+            "maxItems": 200,
+            "minItems": 1,
+            "title": "History"
+          },
+          "observed": {
+            "$ref": "#/components/schemas/Observation"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "split",
+          "site_id",
+          "index_date",
+          "untreated_history_confirmed",
+          "history",
+          "observed"
+        ],
+        "title": "BenchmarkSample"
+      },
+      "CalibrationPoint": {
+        "properties": {
+          "parameters": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Parameters"
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Seed",
+            "default": 1
+          },
+          "measurement_reference": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Measurement Reference"
+          },
+          "split": {
+            "type": "string",
+            "enum": [
+              "calibration",
+              "verification"
+            ],
+            "title": "Split"
+          },
+          "measured_mtf_20": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Measured Mtf 20"
+          },
+          "measured_mtf_50": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Measured Mtf 50"
+          },
+          "qc_passed": {
+            "type": "boolean",
+            "title": "Qc Passed"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "parameters",
+          "measurement_reference",
+          "split",
+          "measured_mtf_20",
+          "measured_mtf_50",
+          "qc_passed"
+        ],
+        "title": "CalibrationPoint"
+      },
+      "CalibrationRequest": {
+        "properties": {
+          "envelope_id": {
+            "type": "string",
+            "title": "Envelope Id"
+          },
+          "max_absolute_mtf_error": {
+            "type": "number",
+            "maximum": 0.2,
+            "exclusiveMinimum": 0.0,
+            "title": "Max Absolute Mtf Error"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/CalibrationPoint"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 5,
+            "title": "Points"
+          },
+          "evidence_kind": {
+            "type": "string",
+            "enum": [
+              "measured_lens",
+              "synthetic_fixture"
+            ],
+            "title": "Evidence Kind"
+          },
+          "measured_at": {
+            "type": "string",
+            "format": "date",
+            "title": "Measured At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "envelope_id",
+          "max_absolute_mtf_error",
+          "points",
+          "evidence_kind",
+          "measured_at"
+        ],
+        "title": "CalibrationRequest"
+      },
+      "CausalRequest": {
+        "properties": {
+          "cohort_id": {
+            "type": "string",
+            "title": "Cohort Id"
+          },
+          "method": {
+            "type": "string",
+            "pattern": "^(randomized_ancova|observational_aipw)$",
+            "title": "Method"
+          },
+          "bootstrap_reps": {
+            "type": "integer",
+            "maximum": 1000.0,
+            "minimum": 50.0,
+            "title": "Bootstrap Reps",
+            "default": 200
+          },
+          "seed": {
+            "type": "integer",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "title": "Seed",
+            "default": 17
+          },
+          "unmeasured_bias_bound_mm": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Unmeasured Bias Bound Mm",
+            "default": 0.1
+          },
+          "missing_outcome_lower_mm": {
+            "type": "number",
+            "maximum": 2.0,
+            "minimum": -2.0,
+            "title": "Missing Outcome Lower Mm",
+            "default": -0.2
+          },
+          "missing_outcome_upper_mm": {
+            "type": "number",
+            "maximum": 3.0,
+            "minimum": 0.0,
+            "title": "Missing Outcome Upper Mm",
+            "default": 1.5
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "cohort_id",
+          "method"
+        ],
+        "title": "CausalRequest"
+      },
+      "Cohort": {
+        "properties": {
+          "protocol_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protocol Id"
+          },
+          "cohort_name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Cohort Name"
+          },
+          "eligibility_version": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Eligibility Version"
+          },
+          "assignment": {
+            "type": "string",
+            "enum": [
+              "randomized",
+              "observational"
+            ],
+            "title": "Assignment"
+          },
+          "comparator": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "SA_ONLY",
+              "SA_BN",
+              "SA_BN_FIBER",
+              "OTHER"
+            ],
+            "title": "Comparator"
+          },
+          "intervention": {
+            "type": "string",
+            "enum": [
+              "SA_ONLY",
+              "SA_BN",
+              "SA_BN_FIBER",
+              "OTHER"
+            ],
+            "title": "Intervention"
+          },
+          "index_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Index Date"
+          },
+          "horizon_months": {
+            "type": "integer",
+            "const": 12,
+            "title": "Horizon Months",
+            "default": 12
+          },
+          "visit_window_days": {
+            "type": "integer",
+            "maximum": 60.0,
+            "minimum": 0.0,
+            "title": "Visit Window Days",
+            "default": 30
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/PatientScope"
+            },
+            "type": "array",
+            "maxItems": 500,
+            "minItems": 2,
+            "title": "Members"
+          },
+          "analysis_plan": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 10,
+            "title": "Analysis Plan"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "cohort_name",
+          "eligibility_version",
+          "assignment",
+          "comparator",
+          "intervention",
+          "index_date",
+          "members",
+          "analysis_plan"
+        ],
+        "title": "Cohort"
+      },
+      "Correction": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "observation_id": {
+            "type": "string",
+            "title": "Observation Id"
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Revision"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 10,
+            "title": "Reason"
+          },
+          "replacement": {
+            "$ref": "#/components/schemas/Observation"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "observation_id",
+          "expected_revision",
+          "reason",
+          "replacement"
+        ],
+        "title": "Correction"
+      },
+      "Deployment": {
+        "properties": {
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "review_id": {
+            "type": "string",
+            "title": "Review Id"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 20,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "model_id",
+          "review_id",
+          "reason"
+        ],
+        "title": "Deployment"
+      },
+      "DesignApproval": {
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Run Id"
+          },
+          "design_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Design Id"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 10,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "run_id",
+          "design_id",
+          "reason"
+        ],
+        "title": "DesignApproval"
+      },
+      "Enrollment": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "protocol_id": {
+            "type": "string",
+            "title": "Protocol Id"
+          },
+          "index_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Index Date"
+          },
+          "eligible": {
+            "type": "boolean",
+            "title": "Eligible"
+          },
+          "assigned_arm": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "SA_ONLY",
+              "SA_BN",
+              "SA_BN_FIBER",
+              "OTHER"
+            ],
+            "title": "Assigned Arm"
+          },
+          "eligibility_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Eligibility Reasons"
+          },
+          "age": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 3.0,
+            "title": "Age"
+          },
+          "baseline_al": {
+            "type": "number",
+            "maximum": 35.0,
+            "minimum": 18.0,
+            "title": "Baseline Al"
+          },
+          "baseline_se": {
+            "type": "number",
+            "maximum": 15.0,
+            "minimum": -20.0,
+            "title": "Baseline Se"
+          },
+          "prior_al_slope": {
+            "type": "number",
+            "maximum": 3.0,
+            "minimum": -2.0,
+            "title": "Prior Al Slope"
+          },
+          "sex_code": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "title": "Sex Code"
+          },
+          "allocation_reference": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Reference"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "protocol_id",
+          "index_date",
+          "eligible",
+          "assigned_arm",
+          "eligibility_reasons",
+          "age",
+          "baseline_al",
+          "baseline_se",
+          "prior_al_slope",
+          "sex_code"
+        ],
+        "title": "Enrollment"
+      },
+      "Envelope": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 3,
+            "title": "Name"
+          },
+          "wavelength_nm": {
+            "type": "number",
+            "maximum": 700.0,
+            "minimum": 400.0,
+            "title": "Wavelength Nm",
+            "default": 550
+          },
+          "pupil_mm": {
+            "type": "number",
+            "maximum": 8.0,
+            "minimum": 2.0,
+            "title": "Pupil Mm",
+            "default": 4
+          },
+          "refractive_index": {
+            "type": "number",
+            "exclusiveMaximum": 2.0,
+            "exclusiveMinimum": 1.0,
+            "title": "Refractive Index",
+            "default": 1.5
+          },
+          "grid": {
+            "type": "integer",
+            "enum": [
+              64,
+              128,
+              256
+            ],
+            "title": "Grid",
+            "default": 128
+          },
+          "feature_width_um": {
+            "type": "number",
+            "maximum": 2000.0,
+            "minimum": 10.0,
+            "title": "Feature Width Um"
+          },
+          "spacing_um": {
+            "type": "number",
+            "maximum": 3000.0,
+            "minimum": 20.0,
+            "title": "Spacing Um"
+          },
+          "feature_count": {
+            "type": "integer",
+            "maximum": 64.0,
+            "minimum": 1.0,
+            "title": "Feature Count",
+            "default": 12
+          },
+          "relief_limit_um": {
+            "type": "number",
+            "maximum": 30.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Relief Limit Um"
+          },
+          "minimum_feature_um": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Minimum Feature Um"
+          },
+          "decentration_mm": {
+            "type": "number",
+            "maximum": 0.5,
+            "minimum": 0.0,
+            "title": "Decentration Mm",
+            "default": 0.1
+          },
+          "rotation_deg": {
+            "type": "number",
+            "maximum": 30.0,
+            "minimum": 0.0,
+            "title": "Rotation Deg",
+            "default": 5
+          },
+          "pupil_variation_mm": {
+            "type": "number",
+            "maximum": 0.5,
+            "minimum": 0.0,
+            "title": "Pupil Variation Mm",
+            "default": 0.2
+          },
+          "height_tolerance_fraction": {
+            "type": "number",
+            "maximum": 0.3,
+            "minimum": 0.0,
+            "title": "Height Tolerance Fraction",
+            "default": 0.05
+          },
+          "bounds": {
+            "additionalProperties": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Bounds"
+          },
+          "process_reference": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Process Reference"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "feature_width_um",
+          "spacing_um",
+          "relief_limit_um",
+          "minimum_feature_um",
+          "bounds",
+          "process_reference"
+        ],
+        "title": "Envelope"
+      },
+      "Estimate": {
+        "properties": {
+          "cohort_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Cohort Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "cohort_id"
+        ],
+        "title": "Estimate"
+      },
+      "EventResolution": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "event_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Event Id"
+          },
+          "resolved_at": {
+            "type": "string",
+            "format": "date",
+            "title": "Resolved At"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 10,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "event_id",
+          "resolved_at",
+          "reason"
+        ],
+        "title": "EventResolution"
+      },
+      "Exposure": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "arm": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "SA_ONLY",
+              "SA_BN",
+              "SA_BN_FIBER",
+              "OTHER"
+            ],
+            "title": "Arm"
+          },
+          "start_at": {
+            "type": "string",
+            "format": "date",
+            "title": "Start At"
+          },
+          "end_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End At"
+          },
+          "design_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Design Id"
+          },
+          "adherence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adherence"
+          },
+          "discontinuation_reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discontinuation Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "arm",
+          "start_at"
+        ],
+        "title": "Exposure"
+      },
+      "Forecast": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "index_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Index Date"
+          },
+          "horizons_months": {
+            "items": {
+              "type": "integer",
+              "enum": [
+                6,
+                12,
+                24
+              ]
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Horizons Months",
+            "default": [
+              6,
+              12,
+              24
+            ]
+          },
+          "model_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Model Id",
+            "default": "npm-history-linear-v1"
+          },
+          "index_age": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 3.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Index Age"
+          },
+          "untreated_history_confirmed": {
+            "type": "boolean",
+            "title": "Untreated History Confirmed",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "index_date"
+        ],
+        "title": "Forecast"
+      },
+      "ForecastResult": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "index_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Index Date"
+          },
+          "horizons_months": {
+            "items": {
+              "type": "integer",
+              "enum": [
+                6,
+                12,
+                24
+              ]
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Horizons Months",
+            "default": [
+              6,
+              12,
+              24
+            ]
+          },
+          "model_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Model Id",
+            "default": "npm-history-linear-v1"
+          },
+          "index_age": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 3.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Index Age"
+          },
+          "untreated_history_confirmed": {
+            "type": "boolean",
+            "title": "Untreated History Confirmed",
+            "default": false
+          },
+          "record_id": {
+            "type": "string",
+            "title": "Record Id"
+          },
+          "prediction_id": {
+            "type": "string",
+            "title": "Prediction Id"
+          },
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "created_by": {
+            "type": "string",
+            "title": "Created By"
+          },
+          "dataset_hash": {
+            "type": "string",
+            "title": "Dataset Hash"
+          },
+          "model_artifact_hash": {
+            "type": "string",
+            "title": "Model Artifact Hash"
+          },
+          "model_registry_id": {
+            "type": "string",
+            "title": "Model Registry Id"
+          },
+          "forecasts": {
+            "items": {
+              "$ref": "#/components/schemas/HorizonForecast"
+            },
+            "type": "array",
+            "title": "Forecasts"
+          },
+          "status": {
+            "type": "string",
+            "const": "research_only",
+            "title": "Status"
+          },
+          "interval_status": {
+            "type": "string",
+            "enum": [
+              "unavailable_pending_held_out_calibration",
+              "patient_split_calibrated"
+            ],
+            "title": "Interval Status"
+          },
+          "clinical_use_allowed": {
+            "type": "boolean",
+            "const": false,
+            "title": "Clinical Use Allowed"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "index_date",
+          "record_id",
+          "prediction_id",
+          "schema_version",
+          "created_at",
+          "created_by",
+          "dataset_hash",
+          "model_artifact_hash",
+          "model_registry_id",
+          "forecasts",
+          "status",
+          "interval_status",
+          "clinical_use_allowed"
+        ],
+        "title": "ForecastResult"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HorizonForecast": {
+        "properties": {
+          "horizon_months": {
+            "type": "integer",
+            "enum": [
+              6,
+              12,
+              24
+            ],
+            "title": "Horizon Months"
+          },
+          "target_at": {
+            "type": "string",
+            "format": "date",
+            "title": "Target At"
+          },
+          "elapsed_days": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Elapsed Days"
+          },
+          "se_d": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Se D"
+          },
+          "al_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Al Mm"
+          },
+          "delta_se_d": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delta Se D"
+          },
+          "delta_al_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delta Al Mm"
+          },
+          "se_interval": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Se Interval"
+          },
+          "al_interval": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Al Interval"
+          },
+          "se_reference_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Se Reference At"
+          },
+          "al_reference_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Al Reference At"
+          },
+          "applicability_flags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Applicability Flags"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "horizon_months",
+          "target_at",
+          "elapsed_days",
+          "se_d",
+          "al_mm",
+          "delta_se_d",
+          "delta_al_mm",
+          "se_interval",
+          "al_interval",
+          "se_reference_at",
+          "al_reference_at",
+          "applicability_flags"
+        ],
+        "title": "HorizonForecast"
+      },
+      "LearningSample": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "split": {
+            "type": "string",
+            "enum": [
+              "train",
+              "validation",
+              "test",
+              "external"
+            ],
+            "title": "Split"
+          },
+          "site_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Site Id"
+          },
+          "index_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Index Date"
+          },
+          "untreated_history_confirmed": {
+            "type": "boolean",
+            "title": "Untreated History Confirmed"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/Observation"
+            },
+            "type": "array",
+            "maxItems": 200,
+            "minItems": 1,
+            "title": "History"
+          },
+          "observed": {
+            "$ref": "#/components/schemas/Observation"
+          },
+          "index_age": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 3.0,
+            "title": "Index Age"
+          },
+          "sex_code": {
+            "type": "integer",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Sex Code",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "split",
+          "site_id",
+          "index_date",
+          "untreated_history_confirmed",
+          "history",
+          "observed",
+          "index_age"
+        ],
+        "title": "LearningSample"
+      },
+      "Observation": {
+        "properties": {
+          "visit_at": {
+            "type": "string",
+            "format": "date",
+            "title": "Visit At"
+          },
+          "se_d": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 15.0,
+                "minimum": -20.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Se D"
+          },
+          "al_mm": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 35.0,
+                "minimum": 18.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Al Mm"
+          },
+          "se_status": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "imputed",
+              "missing"
+            ],
+            "title": "Se Status",
+            "default": "missing"
+          },
+          "al_status": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "imputed",
+              "missing"
+            ],
+            "title": "Al Status",
+            "default": "missing"
+          },
+          "measurement_method": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Measurement Method"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source"
+          },
+          "quality_flag": {
+            "type": "string",
+            "enum": [
+              "ACCEPTED",
+              "WARNING",
+              "REJECTED"
+            ],
+            "title": "Quality Flag",
+            "default": "ACCEPTED"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "visit_at",
+          "measurement_method",
+          "source"
+        ],
+        "title": "Observation"
+      },
+      "ObservationBatch": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "observations": {
+            "items": {
+              "$ref": "#/components/schemas/Observation"
+            },
+            "type": "array",
+            "maxItems": 200,
+            "minItems": 1,
+            "title": "Observations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "observations"
+        ],
+        "title": "ObservationBatch"
+      },
+      "OpticalDemo": {
+        "properties": {
+          "seed": {
+            "type": "integer",
+            "enum": [
+              1,
+              17,
+              42
+            ],
+            "title": "Seed",
+            "default": 17
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "OpticalDemo"
+      },
+      "Optimization": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "objective_version": {
+            "type": "string",
+            "const": "optical-quality-v1",
+            "title": "Objective Version",
+            "default": "optical-quality-v1"
+          },
+          "envelope_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Envelope Id"
+          },
+          "seed": {
+            "type": "integer",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "title": "Seed",
+            "default": 1
+          },
+          "candidate_budget": {
+            "type": "integer",
+            "maximum": 128.0,
+            "minimum": 1.0,
+            "title": "Candidate Budget",
+            "default": 32
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "envelope_id"
+        ],
+        "title": "Optimization"
+      },
+      "OptimizationQueued": {
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "status": {
+            "type": "string",
+            "const": "queued",
+            "title": "Status"
+          },
+          "clinical_use_allowed": {
+            "type": "boolean",
+            "const": false,
+            "title": "Clinical Use Allowed"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "run_id",
+          "status",
+          "clinical_use_allowed"
+        ],
+        "title": "OptimizationQueued"
+      },
+      "OptimizationState": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "objective_version": {
+            "type": "string",
+            "const": "optical-quality-v1",
+            "title": "Objective Version",
+            "default": "optical-quality-v1"
+          },
+          "envelope_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Envelope Id"
+          },
+          "seed": {
+            "type": "integer",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "title": "Seed",
+            "default": 1
+          },
+          "candidate_budget": {
+            "type": "integer",
+            "maximum": 128.0,
+            "minimum": 1.0,
+            "title": "Candidate Budget",
+            "default": 32
+          },
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "record_id": {
+            "type": "string",
+            "title": "Record Id"
+          },
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "created_by": {
+            "type": "string",
+            "title": "Created By"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "blocked",
+              "completed",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "clinical_use_allowed": {
+            "type": "boolean",
+            "const": false,
+            "title": "Clinical Use Allowed"
+          },
+          "feasibility": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feasibility"
+          },
+          "pareto_candidates": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Pareto Candidates"
+          },
+          "optical_metrics": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Optical Metrics"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "calibration_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibration Status"
+          },
+          "simulator_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Simulator Version"
+          },
+          "configuration_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Configuration Hash"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "envelope_id",
+          "run_id",
+          "record_id",
+          "schema_version",
+          "created_at",
+          "created_by",
+          "status",
+          "clinical_use_allowed"
+        ],
+        "title": "OptimizationState"
+      },
+      "Outcome": {
+        "properties": {
+          "prediction_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Prediction Id"
+          },
+          "observation": {
+            "$ref": "#/components/schemas/Observation"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "prediction_id",
+          "observation"
+        ],
+        "title": "Outcome"
+      },
+      "PatientScope": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye"
+        ],
+        "title": "PatientScope"
+      },
+      "Protocol": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 3,
+            "title": "Name"
+          },
+          "version": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Version"
+          },
+          "inclusion_criteria": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Inclusion Criteria"
+          },
+          "exclusion_criteria": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Exclusion Criteria"
+          },
+          "estimand": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 20,
+            "title": "Estimand"
+          },
+          "assignment": {
+            "type": "string",
+            "enum": [
+              "randomized",
+              "observational"
+            ],
+            "title": "Assignment"
+          },
+          "analysis_population": {
+            "type": "string",
+            "enum": [
+              "intention_to_treat",
+              "per_protocol"
+            ],
+            "title": "Analysis Population",
+            "default": "intention_to_treat"
+          },
+          "covariates": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "age",
+                "baseline_al",
+                "baseline_se",
+                "prior_al_slope",
+                "sex_code"
+              ]
+            },
+            "type": "array",
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Covariates"
+          },
+          "missingness_plan": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 20,
+            "title": "Missingness Plan"
+          },
+          "switching_plan": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 20,
+            "title": "Switching Plan"
+          },
+          "safety_plan": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 20,
+            "title": "Safety Plan"
+          },
+          "analysis_plan": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 20,
+            "title": "Analysis Plan"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "inclusion_criteria",
+          "exclusion_criteria",
+          "estimand",
+          "assignment",
+          "covariates",
+          "missingness_plan",
+          "switching_plan",
+          "safety_plan",
+          "analysis_plan"
+        ],
+        "title": "Protocol"
+      },
+      "ReleasePolicy": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 3,
+            "title": "Name"
+          },
+          "max_al_mae": {
+            "type": "number",
+            "maximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Max Al Mae",
+            "default": 0.2
+          },
+          "max_se_mae": {
+            "type": "number",
+            "maximum": 3.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Max Se Mae",
+            "default": 0.5
+          },
+          "minimum_coverage": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.5,
+            "title": "Minimum Coverage",
+            "default": 0.85
+          },
+          "minimum_test_patients": {
+            "type": "integer",
+            "maximum": 10000.0,
+            "minimum": 4.0,
+            "title": "Minimum Test Patients",
+            "default": 20
+          },
+          "require_external": {
+            "type": "boolean",
+            "title": "Require External",
+            "default": true
+          },
+          "minimum_relative_improvement": {
+            "type": "number",
+            "maximum": 0.5,
+            "minimum": 0.0,
+            "title": "Minimum Relative Improvement",
+            "default": 0.05
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "ReleasePolicy"
+      },
+      "Review": {
+        "properties": {
+          "target_kind": {
+            "type": "string",
+            "enum": [
+              "model",
+              "envelope",
+              "design"
+            ],
+            "title": "Target Kind"
+          },
+          "target_id": {
+            "type": "string",
+            "title": "Target Id"
+          },
+          "evidence_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Id"
+          },
+          "policy_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policy Id"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "reject"
+            ],
+            "title": "Decision"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 20,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "target_kind",
+          "target_id",
+          "decision",
+          "reason"
+        ],
+        "title": "Review"
+      },
+      "Rollback": {
+        "properties": {
+          "target_deployment_id": {
+            "type": "string",
+            "title": "Target Deployment Id"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 20,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "target_deployment_id",
+          "reason"
+        ],
+        "title": "Rollback"
+      },
+      "StudyDemo": {
+        "properties": {
+          "assignment": {
+            "type": "string",
+            "enum": [
+              "randomized",
+              "observational"
+            ],
+            "title": "Assignment",
+            "default": "randomized"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "StudyDemo"
+      },
+      "StudyEvent": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Patient Id"
+          },
+          "case_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Case Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "protocol_id": {
+            "type": "string",
+            "title": "Protocol Id"
+          },
+          "event_at": {
+            "type": "string",
+            "format": "date",
+            "title": "Event At"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "adverse_event",
+              "lost_followup",
+              "withdrawal",
+              "protocol_deviation",
+              "followup_completed"
+            ],
+            "title": "Kind"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "mild",
+              "moderate",
+              "severe",
+              "not_applicable"
+            ],
+            "title": "Severity"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 10,
+            "title": "Description"
+          },
+          "resolved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "patient_id",
+          "case_id",
+          "eye",
+          "protocol_id",
+          "event_at",
+          "kind",
+          "severity",
+          "description"
+        ],
+        "title": "StudyEvent"
+      },
+      "TrainRequest": {
+        "properties": {
+          "dataset_version": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Dataset Version"
+          },
+          "validation_policy_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validation Policy Id"
+          },
+          "split_strategy": {
+            "type": "string",
+            "enum": [
+              "patient",
+              "temporal"
+            ],
+            "title": "Split Strategy",
+            "default": "patient"
+          },
+          "evidence_kind": {
+            "type": "string",
+            "pattern": "^(clinical_dataset|synthetic_fixture)$",
+            "title": "Evidence Kind",
+            "default": "clinical_dataset"
+          },
+          "algorithm": {
+            "type": "string",
+            "pattern": "^(mixed_effects|gradient_boosting|temporal_transformer)$",
+            "title": "Algorithm"
+          },
+          "samples": {
+            "items": {
+              "$ref": "#/components/schemas/LearningSample"
+            },
+            "type": "array",
+            "maxItems": 4000,
+            "minItems": 30,
+            "title": "Samples"
+          },
+          "seed": {
+            "type": "integer",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "title": "Seed",
+            "default": 17
+          },
+          "alpha": {
+            "type": "number",
+            "maximum": 0.3,
+            "minimum": 0.05,
+            "title": "Alpha",
+            "default": 0.1
+          },
+          "epochs": {
+            "type": "integer",
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Epochs",
+            "default": 8
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "dataset_version",
+          "algorithm",
+          "samples"
+        ],
+        "title": "TrainRequest"
+      },
+      "Validation": {
+        "properties": {
+          "dataset_version": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Dataset Version"
+          },
+          "model_id": {
+            "type": "string",
+            "enum": [
+              "npm-carry-forward-v1",
+              "npm-history-linear-v1"
+            ],
+            "title": "Model Id"
+          },
+          "split_strategy": {
+            "type": "string",
+            "enum": [
+              "patient",
+              "temporal",
+              "external_site"
+            ],
+            "title": "Split Strategy"
+          },
+          "samples": {
+            "items": {
+              "$ref": "#/components/schemas/BenchmarkSample"
+            },
+            "type": "array",
+            "maxItems": 2000,
+            "minItems": 3,
+            "title": "Samples"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "dataset_version",
+          "model_id",
+          "split_strategy",
+          "samples"
+        ],
+        "title": "Validation"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

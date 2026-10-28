@@ -1,0 +1,635 @@
+{
+  "schema_version": "3.0.0-research.1",
+  "store": "InMemoryDesignStore",
+  "routes": [
+    {
+      "path": "/openapi.json",
+      "methods": [
+        "GET",
+        "HEAD"
+      ]
+    },
+    {
+      "path": "/docs",
+      "methods": [
+        "GET",
+        "HEAD"
+      ]
+    },
+    {
+      "path": "/docs/oauth2-redirect",
+      "methods": [
+        "GET",
+        "HEAD"
+      ]
+    },
+    {
+      "path": "/redoc",
+      "methods": [
+        "GET",
+        "HEAD"
+      ]
+    },
+    {
+      "path": "/api/v3/health",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/research",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/npm/health",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/ipm/health",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/optimizer/health",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/cases",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/session",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/cases/{case_id}/observations",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/observations",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/exposures",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/npm/predict",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/outcomes/evaluate",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/ipm/cohorts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/ipm/estimate",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/optimizer/run",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/optimizer/{run_id}",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/designs/approve",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/models/validate",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/cases/{case_id}/trace",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/demo/npm",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/observations/correct",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/studies/protocols",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/studies/enrollments",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/studies/events",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/ipm/analyze",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/studies/events/resolve",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/models/policies",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/models/train",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/models/training/{run_id}",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/models/available",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/optimizer/envelopes",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/optimizer/calibrations",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/releases/review",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/releases/deploy",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/releases/rollback",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/ready",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/operations",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/manufacturing/plans",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/manufacturing/reviews",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/manufacturing/lots",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/manufacturing/qc",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/manufacturing/exposures",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/manufacturing/outcomes",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/manufacturing/cases/{case_id}/trace",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/policies",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/train",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/models/{model_id}",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/reviews",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/deployments",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/shadow",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/outcomes",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/models/{model_id}/monitor",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/health",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/manufacturing/health",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/multiarm/cohorts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/multiarm/policies",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/models/{model_id}/design-analysis",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/adaptive/shadows/{shadow_id}",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v3/demo/study",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/demo/optics",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v3/demo/training",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/health",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/predict",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/followup",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/clinical/override",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/governance/lineage/{execution_id}",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v2/cases",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/cases/{case_id}/visits",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/trace/{case_id}",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v2/exposures",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/qc-measurements",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/outcomes",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/cases/{case_id}/training-eligibility",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/datasets",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/training-runs",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/models",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/models",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v2/models/{model_id}/validate",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/models/{model_id}/candidate",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/models/{model_id}/approve",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/models/{model_id}/promote",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v2/models/rollback",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/design/approve",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/manufacturing/submit",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/manufacturing/package",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/manufacturing/verify",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/refit",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/report/prediction",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/report/followup",
+      "methods": [
+        "POST"
+      ]
+    }
+  ],
+  "source_sha256": {
+    "api.py": "76cfd8bc8c94cab612a48e94b3189f851ead7f8bd6f22ac323e65d749c47532c",
+    "research_api.py": "eb33dc5222c1424c636295b4b60e9474fc947c99c34fc394e3d4ca9c98473805",
+    "research_workflows_api.py": "16a005bfd915dd87b90bdb9380fec20106d346f0a4ac27f5941a89a29f87a6cf",
+    "research_extension_api.py": "0780dbc0b0249dd8b068a7b535eff0862aad43996b0345abb733dd4516dc93c9",
+    "research_operations_api.py": "ffa96f044fb79bf84812f96a27762692eea17a45f9e197232f8bf4444fb5caed",
+    "research_demo_api.py": "307d5fb0890acf5c2c70b917e53c761ba2b306db1dd7a6f38a67e41367ca394c",
+    "nso/manufacturing/store.py": "becc66fa0266bc201d11495e1297eca31d655af289c41139f66688e6fa3bcc0e",
+    "schema_v22.sql": "7dc721ffc6512c74063ee2d97f9ce77f795fb90e7b23467009c38a0331ac95a0",
+    "migrations/v3_001.sql": "5051f412e60ff1e670a4c4a3e5ec280fd2cc4ce2fdec047f42231194d4662f37",
+    "migrations/v3_002.sql": "592983c4e110a2538241d85495c7c01ce663efb254040d9ddb69efadd2a6f755",
+    "nso/research.py": "d77163f60ffe3308d445dd901fe0762d28c74c81b36d7daf75824d64b76629e6",
+    "nso/research_adaptive.py": "bb3512fc0dec4718ff17ffdcef21b64dd7ece21fd45cf3cd42752394384b2d42",
+    "nso/research_advanced.py": "9229c571172ed40b3898a393583957395f722bca11baa4b018ca413231237a41",
+    "nso/research_causal.py": "c4e1bed1989cab8b8e8f3f0146666adf8c22b5885811180e8b87e16225c43f06",
+    "nso/research_contracts.py": "4349677ccfa13a4ead23fb48e9e6b3a08b9f9445d02e7ac0f9f2d884d51af0b2",
+    "nso/research_data.py": "e61b270447a9e49eff9a18cf4dbba45d1dd79d645a3b412a6f84ef2408beec58",
+    "nso/research_extension_fixtures.py": "151d7888b31fdaa7d2d75dd9e85695330e5bd698bf47ae9f361bcb40b9ef39a4",
+    "nso/research_fixtures.py": "b9c4bb857c13f746544e210fb57896444a37d9735183721bdfe546e1ca0947eb",
+    "nso/research_incremental.py": "586af962ddc929d9230c42ebf322a4710df855ce1c92aba3001e3d02429a322d",
+    "nso/research_jobs.py": "435c74db86682cfa157f0929239f1f6b51fcfcb2a0793f3be5b5184a12867e08",
+    "nso/research_learning.py": "d9be1dda363722cb23e3e96ccec37f54e211efec750e3916a83e93f2f1629cb1",
+    "nso/research_manufacturing.py": "d29cba316939b9d70c270c99517b75152d3712783c9382daa9b3ce2b2c16bed2",
+    "nso/research_multiarm.py": "ae2ff6156751097f0e48d5adfa0843d53080d045dcad4f575e8aa444a0ac04ba",
+    "nso/research_multiarm_fixtures.py": "132222be6f2585e83f24796b71d93fae2946a671c4799030ffe6d01dadbfba65",
+    "nso/research_operations.py": "e016ea20fa3797745c41a955d6238ce13f43af903163e72b39de8a06b9b3dcb3",
+    "nso/research_optics.py": "04517c21d563ed61ca511a0d89d1acb03e30963473eff7e0cd8a67cb674cd1f2",
+    "nso/research_release.py": "508805469711749c7769a1ee9e844ee24c0fd47b1e27e1f4150adce53f4c0ff3",
+    "nso/research_security.py": "a0439cc9b6b23659043601a3e14b6532cbf243477c7b691c0464cf3a0c465b77"
+  },
+  "research_state": {
+    "status": "ok",
+    "version": "3.0.0-research.1",
+    "clinical_use_allowed": false,
+    "features": {
+      "npm_enabled": false,
+      "ipm_research_enabled": false,
+      "optimizer_enabled": false,
+      "adaptive_ranking_enabled": false,
+      "adaptive_shadow_enabled": false,
+      "manufacturing_enabled": false
+    },
+    "services": {
+      "npm": "population_training_and_baselines",
+      "ipm": "protocol_gated_arm_analysis",
+      "optimizer": "reference_simulator_requires_measured_calibration",
+      "adaptive_ranking": "governed_shadow_only"
+    }
+  },
+  "inspection_scope": "Local source/configuration structure only; no production access or patient export.",
+  "entity_mapping": {
+    "clinical_observation": "domain_records/v3_observation plus conservative V2 visit/clinical_measurement adapter",
+    "treatment_exposure": "domain_records/v3_exposure",
+    "prediction_run": "domain_records/v3_prediction",
+    "causal_cohort": "domain_records/v3_cohort",
+    "optimization_run": "domain_records/v3_optimization + v3_optimization_result",
+    "outcome_evaluation": "domain_records/v3_outcome",
+    "model_validation": "v3_validation benchmark plus immutable v3_trained_model artifacts and v3_training_result reports",
+    "v31_shadow": "v3_adaptive_policy/model/review/deployment/shadow/outcome; controlled binary arm research, no prescribing",
+    "v3_manufacturing": "v3_manufacturing_* provenance reuses recipe_version, manufacturing_lot, qc_measurement and product_exposure",
+    "release_history": "v3_release_review and v3_npm_deployment append-only records",
+    "observation_correction": "v3_observation_correction preserves original observation",
+    "job_lease": "v3_job_leases, additive SQL table",
+    "patient_case_visit_eye": "Reuse existing V2 domains and identifiers",
+    "design_recipe_lot_qc": "Reuse V2 registry/vault and physical-product records; no V3 manufacturing release",
+    "idempotency": "v3_operations, additive SQL table"
+  }
+}

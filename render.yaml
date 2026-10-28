@@ -7,7 +7,7 @@ services:
     runtime: python
     plan: free
     rootDir: src/backend
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements-research.lock.txt
     startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     envVars:
@@ -30,7 +30,9 @@ services:
       - key: MANUFACTURING_KEY_ASSEMBLY
         sync: false
       - key: PYTHON_VERSION
-        value: "3.11.9"
+        value: "3.12.16"
+      - key: OMP_NUM_THREADS
+        value: "1"
       # Design store. WITHOUT THIS the store is in-memory and every Design ID
       # dies with the process: submit, vendor pull and refit all 404 after a
       # restart. /api/health reports which backend is live.
@@ -41,4 +43,14 @@ services:
       #   sqlite:////var/data/nso.db        (needs a mounted Disk)
       #   postgresql://user:pw@host/dbname  (intended production backend)
       - key: NSO_DATABASE_URL
+        sync: false
+      # V3 patient-data functions stay off until access/data review on staging.
+      # The public synthetic demonstration never reads the clinical database.
+      - key: NSO_V3_NPM_ENABLED
+        value: "false"
+      - key: NSO_V3_IPM_RESEARCH_ENABLED
+        value: "false"
+      - key: NSO_V3_OPTIMIZER_ENABLED
+        value: "false"
+      - key: NSO_V3_PRINCIPALS
         sync: false

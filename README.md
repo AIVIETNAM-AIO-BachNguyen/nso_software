@@ -1,8 +1,47 @@
+> **29 October 2026:** Three-arm DR shadow ranking and protected design-parameter predictive-value analysis are available. See [current implementation](docs/v3/MULTIARM_COMPLETION_2026-10-29.md) and [validation](docs/v3/MULTIARM_VALIDATION.md).
+
+> **28 October 2026 update:** V3 research manufacturing trace and a governed V3.1 shadow prototype are implemented. See [implementation and validation](docs/v3/V3_MANUFACTURING_V31_COMPLETION_2026-10-28.md). Reference recipes are not machine toolpaths; adaptive output never authorizes manufacturing or treatment.
+
 # NSO AI-PC V2.2 — Clinical Decision Support
 
 A knowledge-guided personalization engine exposed through a FastAPI backend
 and a Next.js clinical frontend. It is a clinical-pilot prototype, not an
 autonomous diagnostic or treatment-efficacy prediction system.
+
+## V3 research workflows on Python 3.12.16
+
+The `/research` workspace now supports versioned observation corrections,
+locked study protocols and enrollment, safety/follow-up events, population
+model training (age-adjusted mixed effects, boosting and a temporal Transformer
+prototype), patient-level calibration and held-out evaluation, adjusted arm
+comparisons, scalar-diffraction reference optimization and independent research
+review/deployment/rollback. Synthetic examples can run without patient access.
+
+See [the current engineering report](docs/v3/COMPLETION_2026-10-26.md) for tested
+behavior, limitations and operational commands. The older 23 October reports
+are historical. All V3 outputs remain research-only. The optical engine is a
+reference phase-screen model requiring measured-lens verification, not a
+validated NSO product model. V3.1 clinical-adaptive ranking remains unavailable.
+
+Use the isolated `.venv312` environment; the older `.venv` is preserved only for
+comparison. `.python-version` pins 3.12.16. If an exact interpreter is unavailable,
+`bash scripts/bootstrap_python312.sh` downloads the checksum-verified official
+source and builds it in `.runtime/`. Then create a virtual environment with that
+interpreter and install `src/backend/requirements-research.lock.txt` using uv.
+
+```sh
+source .venv312/bin/activate
+uv pip install --python .venv312/bin/python -r src/backend/requirements-research.lock.txt
+OMP_NUM_THREADS=1 .venv312/bin/python -m pytest -q src/backend
+```
+
+The production API requires durable storage, expiring server-provisioned
+sessions, explicit roles/patient scopes and exact CORS origins. These controls
+also cover legacy clinical routes; unsupported V2 governance mutations are
+blocked in production. Configure `src/backend/.env.v3.example` before rollout.
+Do not enable a public production deployment without provisioning access and
+a durable database. No cloud deployment has been performed in this task.
+
 
 ```
 src/
@@ -185,10 +224,11 @@ stored prediction can always be traced to what produced it.
 ### 1. Backend (FastAPI)
 
 ```bash
+# From the repository root, using Python 3.12.16:
+python3.12 -m venv .venv312
+source .venv312/bin/activate
+pip install -r src/backend/requirements-research.lock.txt
 cd src/backend
-python3 -m venv .venv
-source .venv/bin/activate            # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
 uvicorn api:app --reload --port 8000
 ```
 

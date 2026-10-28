@@ -3,7 +3,7 @@
 Run after building the frontend:
 
     cd src/frontend && npm run build
-    cd ../backend && ../../.venv/bin/python verify_black_box.py
+    cd ../backend && ../../.venv312/bin/python verify_black_box.py
 
 The verifier inspects only artifacts available at public boundaries: clinical
 HTTP responses, the production browser page bundle, browser-storage calls,
@@ -143,6 +143,12 @@ def verify() -> dict:
     if not re.fullmatch(rf"{re.escape(design_id)}-R\d+", refit.json()["design_id"]):
         raise AssertionError("re-fit did not create an opaque immutable revision ID")
 
+    research_demo = client.post("/api/v3/demo/npm", json={"eye": "OD"})
+    research_demo.raise_for_status()
+    responses.append(research_demo.text)
+    if not research_demo.json().get("synthetic") or research_demo.json().get("clinical_use_allowed"):
+        raise AssertionError("research demo is not clearly synthetic and unvalidated")
+
     for index, body in enumerate(responses, start=1):
         assert_clean(f"API response {index}", body)
 
@@ -167,13 +173,13 @@ def verify() -> dict:
     if "does not predict treatment efficacy or axial-length reduction" not in pdf_text:
         raise AssertionError("exported PDF is missing the medical-claim disclaimer")
 
-    page_bundles = sorted((FRONTEND / ".next" / "static" / "chunks" / "app").glob("page-*.js"))
+    page_bundles = sorted((FRONTEND / ".next" / "static" / "chunks" / "app").rglob("page-*.js"))
     if not page_bundles:
         raise RuntimeError("production page bundle not found; run npm run build first")
     for bundle in page_bundles:
         assert_clean(f"browser bundle {bundle.name}", bundle.read_text(errors="replace"))
 
-    frontend_source = (FRONTEND / "app" / "page.js").read_text()
+    frontend_source = "\n".join(p.read_text() for p in (FRONTEND / "app").rglob("*.js"))
     for storage_api in ("localStorage", "sessionStorage", "indexedDB"):
         if storage_api in frontend_source:
             raise AssertionError(f"frontend persists clinical data through {storage_api}")

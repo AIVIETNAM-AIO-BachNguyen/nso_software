@@ -1,0 +1,372 @@
+{
+  "status": "PASS",
+  "synthetic_only": true,
+  "clinical_use_allowed": false,
+  "machine_instructions": false,
+  "ranking_mode": "shadow_only",
+  "http_checks": [
+    {
+      "method": "GET",
+      "path": "/api/v3/health",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/adaptive/train",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/npm/predict",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/optimizer/envelopes",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/optimizer/run",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/optimizer/OPT-2FEB0693AC254B0196EBEE37",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/plans",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/reviews",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/optimizer/envelopes",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/optimizer/run",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/optimizer/OPT-93FC84AE4A3444B492D2BFA0",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/plans",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/reviews",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/adaptive/policies",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/adaptive/train",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/adaptive/reviews",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/adaptive/deployments",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/studies/enrollments",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/adaptive/shadow",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/lots",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/exposures",
+      "status": 409
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/qc",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/exposures",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/outcomes",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/adaptive/outcomes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/adaptive/models/AMOD-D0422FAB35E846FF9E46E8A6/monitor",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/manufacturing/cases/SYN-SHADOW-LIVE-CASE/trace",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/adaptive/deployments",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/adaptive/reviews",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/adaptive/shadow",
+      "status": 409
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/reviews",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/manufacturing/lots",
+      "status": 409
+    }
+  ],
+  "manufacturing_chain": [
+    "Observation",
+    "Prediction",
+    "Candidate",
+    "Independent approval",
+    "Reference recipe",
+    "Lot",
+    "QC",
+    "Exposure",
+    "Outcome",
+    "Validation"
+  ],
+  "held_out_report": {
+    "test": {
+      "patients": 60,
+      "missing_patients": 0,
+      "analysis_population": "eligible patients with complete measured endpoints; randomized assigned arm retained",
+      "subgroup_calibration": {
+        "age_under_12": {
+          "patients": 27,
+          "predicted_effect_mm": -0.11521482266772837,
+          "dr_pseudo_effect_mm": -0.14267952620285082
+        },
+        "age_12_plus": {
+          "patients": 33,
+          "predicted_effect_mm": 0.08486184512706052,
+          "dr_pseudo_effect_mm": 0.13170658110437208
+        },
+        "sex_0": {
+          "patients": 31,
+          "predicted_effect_mm": 0.031251665263425446,
+          "dr_pseudo_effect_mm": 0.046272967643531435
+        },
+        "sex_1": {
+          "patients": 29,
+          "predicted_effect_mm": -0.04410899813799509,
+          "dr_pseudo_effect_mm": -0.03243075958559198
+        }
+      },
+      "dr_pseudo_outcome_mse": 0.0025247369092606616,
+      "arm_baseline_mse": 0.027591936067936904,
+      "relative_improvement": 0.9084972905473451,
+      "group_calibration": [
+        {
+          "patients": 20,
+          "predicted_effect_mm": -0.14584773609864646,
+          "dr_pseudo_effect_mm": -0.17969802936927814
+        },
+        {
+          "patients": 20,
+          "predicted_effect_mm": 0.009595933120118394,
+          "dr_pseudo_effect_mm": 0.023997001642156672
+        },
+        {
+          "patients": 20,
+          "predicted_effect_mm": 0.12073383683674462,
+          "dr_pseudo_effect_mm": 0.18039952617548688
+        }
+      ],
+      "max_group_calibration_error_mm": 0.059665689338742264,
+      "policy_delta_al_mm_vs_constant_arm": -0.0719052064823189,
+      "policy_delta_approx_95_interval": [
+        -0.09554895885823858,
+        -0.04826145410639923
+      ],
+      "overlap": {
+        "extreme_fraction": 0.0,
+        "ess_comparator_intervention": [
+          30.0,
+          30.0
+        ]
+      },
+      "uncertainty": "Patient-level held-out DR score normal approximation with fixed nuisance fits; no individual effect CI."
+    },
+    "external": {
+      "patients": 60,
+      "missing_patients": 0,
+      "analysis_population": "eligible patients with complete measured endpoints; randomized assigned arm retained",
+      "subgroup_calibration": {
+        "age_under_12": {
+          "patients": 30,
+          "predicted_effect_mm": -0.10085704393397235,
+          "dr_pseudo_effect_mm": -0.13353765860731057
+        },
+        "age_12_plus": {
+          "patients": 30,
+          "predicted_effect_mm": 0.07958701415349428,
+          "dr_pseudo_effect_mm": 0.11723030736287726
+        },
+        "sex_0": {
+          "patients": 34,
+          "predicted_effect_mm": -0.001219628709717971,
+          "dr_pseudo_effect_mm": -0.005916944412923658
+        },
+        "sex_1": {
+          "patients": 26,
+          "predicted_effect_mm": -0.0229474429724589,
+          "dr_pseudo_effect_mm": -0.011078631818984434
+        }
+      },
+      "dr_pseudo_outcome_mse": 0.002006603730990288,
+      "arm_baseline_mse": 0.021521530533838762,
+      "relative_improvement": 0.9067629633573104,
+      "group_calibration": [
+        {
+          "patients": 20,
+          "predicted_effect_mm": -0.13428075378557297,
+          "dr_pseudo_effect_mm": -0.176845806620493
+        },
+        {
+          "patients": 20,
+          "predicted_effect_mm": -0.0029900632501083713,
+          "dr_pseudo_effect_mm": 0.006904964324334656
+        },
+        {
+          "patients": 20,
+          "predicted_effect_mm": 0.10536577236496418,
+          "dr_pseudo_effect_mm": 0.14547981542950839
+        }
+      ],
+      "max_group_calibration_error_mm": 0.04256505283492004,
+      "policy_delta_al_mm_vs_constant_arm": -0.058085946662986596,
+      "policy_delta_approx_95_interval": [
+        -0.07726050782787915,
+        -0.038911385498094045
+      ],
+      "overlap": {
+        "extreme_fraction": 0.0,
+        "ess_comparator_intervention": [
+          30.0,
+          30.0
+        ]
+      },
+      "uncertainty": "Patient-level held-out DR score normal approximation with fixed nuisance fits; no individual effect CI."
+    }
+  },
+  "monitor": {
+    "subgroups": {
+      "age_under_12": {
+        "patients": 0,
+        "observations": 0,
+        "mean_observed_delta_al_mm": null,
+        "mean_adherence": null,
+        "causal_comparison": false
+      },
+      "age_12_plus": {
+        "patients": 1,
+        "observations": 1,
+        "mean_observed_delta_al_mm": 0.1999999999999993,
+        "mean_adherence": 0.95,
+        "causal_comparison": false
+      },
+      "sex_0": {
+        "patients": 1,
+        "observations": 1,
+        "mean_observed_delta_al_mm": 0.1999999999999993,
+        "mean_adherence": 0.95,
+        "causal_comparison": false
+      },
+      "sex_1": {
+        "patients": 0,
+        "observations": 0,
+        "mean_observed_delta_al_mm": null,
+        "mean_adherence": null,
+        "causal_comparison": false
+      }
+    },
+    "qc_failed_reports": 0,
+    "overdue_followup_logs": 0,
+    "shadow_logs": 1,
+    "outcomes": 1,
+    "missing_followup_logs": 0,
+    "ood_fraction": 0.0,
+    "mean_absolute_standardized_feature_shift": [
+      0.1920044145553314,
+      0.15009699117213435,
+      0.12866171009516217,
+      0.0,
+      1.0339078862458586
+    ],
+    "observed_arms": {
+      "SA_ONLY": {
+        "patients": 1,
+        "observations": 1,
+        "mean_observed_delta_al_mm": 0.1999999999999993,
+        "mean_adherence": 0.95,
+        "causal_comparison": false
+      },
+      "SA_BN": {
+        "patients": 0,
+        "observations": 0,
+        "mean_observed_delta_al_mm": null,
+        "mean_adherence": null,
+        "causal_comparison": false
+      }
+    },
+    "unresolved_severe_events": 0,
+    "automatic_promotion": false,
+    "individual_causal_validation": false,
+    "clinical_use_allowed": false,
+    "alerts": []
+  },
+  "browser_tested": false
+}

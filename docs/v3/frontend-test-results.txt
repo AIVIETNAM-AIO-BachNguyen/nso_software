@@ -1,0 +1,20 @@
+
+> nso-frontend@0.3.0 test
+> node --test tests/*.test.cjs
+
+✔ study demo renders an invented adjusted result and never sends patient data (10.281958ms)
+✔ switching demo module discards a late response and aborts the prior request (1.574166ms)
+✔ demo API errors are visible and the run button becomes usable again (1.17025ms)
+✔ observation import binds the selected case/eye, ignoring identity in uploaded JSON (5.107166ms)
+✔ correction sends the expected revision and preserves measured/imputed provenance (2.663625ms)
+✔ workbenches hide review/deployment controls from researcher-only sessions (0.749583ms)
+✔ training upload uses the locked policy and chosen algorithm rather than file overrides (2.26925ms)
+✔ engineering result view projects permitted fields and does not display returned parameters (0.879375ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 167.018042

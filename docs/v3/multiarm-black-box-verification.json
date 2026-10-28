@@ -1,0 +1,16 @@
+{
+  "api_responses_scanned": 10,
+  "browser_bundles_scanned": 3,
+  "pdf_pages_verified": 3,
+  "design_id_format": "HMAC-SHA256 / 96-bit opaque handle",
+  "storage_apis_detected": 0,
+  "prediction_seconds": [
+    0.0327,
+    0.0191,
+    0.0197,
+    0.0204,
+    0.0211
+  ],
+  "slowest_warm_prediction_seconds": 0.0327,
+  "status": "PASS"
+}

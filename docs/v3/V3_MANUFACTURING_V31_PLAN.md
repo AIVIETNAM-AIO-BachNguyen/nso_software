@@ -1,0 +1,12 @@
+# V3 manufacturing thread and V3.1 implementation plan
+
+Started 28 October 2026; Python 3.12.16. Extends the 26 October implementation; V3.1 is now explicitly in scope. Existing changes and PROJECT_REPORT.md are preserved.
+
+1. Build an additive manufacturing bridge using existing recipe, lot, QC and product-exposure domains. Freeze candidate/envelope/prediction provenance and QC requirements before independent approval. Require explicit manufacturing actions, compute QC acceptance from locked tolerances, quarantine failed lots, recheck withdrawn approvals, and bind follow-up/validation to the same patient/case/eye/prediction.
+2. Separate synthetic rehearsal from measured research. Synthetic recipes/lots never acquire permission for real manufacturing or clinical prescribing. Reference optical parameters are reproducibility recipes, not certified machine toolpaths. Measured research requires current optical approval and independent process confirmation.
+3. Add immutable V3.1 analysis policy, patient-disjoint training/test/external or temporal cohorts, cross-fitted doubly robust pseudo-outcome learner with shrinkage, arm-level comparator, overlap/ESS and held-out diagnostics. Do not present pseudo-outcome prediction errors as ground-truth CATE validation or individual causal confidence intervals.
+4. Add independent review, explicit shadow deployment/withdrawal/rollback, optional constrained arm-informed candidate ordering, OOD abstention, prospective shadow logs, follow-up monitoring, subgroup/drift/safety reporting and offline versioned retraining. No automatic promotion, treatment assignment or manufacturing actions from rankings.
+5. Expose authenticated, role/patient-scoped, audited/idempotent APIs and research UI workbenches. Keep parameters/tolerances protected and clear session-dependent state.
+6. Verify synthetic end-to-end manufacturing and V3.1 runs on memory/SQLite/PostgreSQL. Exercise wrong patient/eye, stale approval, failed/missing QC, malformed data, leakage, overlap, insufficient sample size, missing outcomes, synthetic evidence gates, idempotency, failure rollback, deterministic learning/ranking and monitoring. Run full backend regression, frontend components/build/audit, and real loopback HTTP checks.
+
+Completion report will distinguish implemented software from real-lens qualification, prospective clinical validation, external scientific sign-off and cloud deployment. V3.1 ranking stays shadow-only in this implementation.

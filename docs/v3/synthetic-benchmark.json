@@ -1,0 +1,114 @@
+{
+  "synthetic": true,
+  "clinical_use_allowed": false,
+  "report": {
+    "model_id": "npm-history-linear-v1",
+    "model_registry_id": "MOD-V3-NPM-HISTORY-LINEAR-1.0.0",
+    "dataset_version": "synthetic-arithmetic-fixture-not-evidence",
+    "dataset_id": "DS3-8D3B2223AAB44B279E680866",
+    "dataset_hash": "789ba676f51898d62955ae9232300805f512525bb7794e90f48aa3875553de27",
+    "split_strategy": "external_site",
+    "metrics": {
+      "external": {
+        "se": {
+          "n_endpoints": 3,
+          "n_patients": 3,
+          "mae": 0.0,
+          "rmse": 0.0,
+          "bias_predicted_minus_observed": 0.0,
+          "interval_coverage": null,
+          "calibration": null,
+          "abstained_or_ineligible": 0
+        },
+        "al": {
+          "n_endpoints": 3,
+          "n_patients": 3,
+          "mae": 1.1842378929335002e-15,
+          "rmse": 2.0511601988091347e-15,
+          "bias_predicted_minus_observed": 1.1842378929335002e-15,
+          "interval_coverage": null,
+          "calibration": null,
+          "abstained_or_ineligible": 0
+        }
+      },
+      "test": {
+        "se": {
+          "n_endpoints": 3,
+          "n_patients": 3,
+          "mae": 0.0,
+          "rmse": 0.0,
+          "bias_predicted_minus_observed": 0.0,
+          "interval_coverage": null,
+          "calibration": null,
+          "abstained_or_ineligible": 0
+        },
+        "al": {
+          "n_endpoints": 3,
+          "n_patients": 3,
+          "mae": 1.1842378929335002e-15,
+          "rmse": 2.0511601988091347e-15,
+          "bias_predicted_minus_observed": 1.1842378929335002e-15,
+          "interval_coverage": null,
+          "calibration": null,
+          "abstained_or_ineligible": 0
+        }
+      },
+      "train": {
+        "se": {
+          "n_endpoints": 3,
+          "n_patients": 3,
+          "mae": 0.0,
+          "rmse": 0.0,
+          "bias_predicted_minus_observed": 0.0,
+          "interval_coverage": null,
+          "calibration": null,
+          "abstained_or_ineligible": 0
+        },
+        "al": {
+          "n_endpoints": 3,
+          "n_patients": 3,
+          "mae": 1.1842378929335002e-15,
+          "rmse": 2.0511601988091347e-15,
+          "bias_predicted_minus_observed": 1.1842378929335002e-15,
+          "interval_coverage": null,
+          "calibration": null,
+          "abstained_or_ineligible": 0
+        }
+      },
+      "validation": {
+        "se": {
+          "n_endpoints": 3,
+          "n_patients": 3,
+          "mae": 0.0,
+          "rmse": 0.0,
+          "bias_predicted_minus_observed": 0.0,
+          "interval_coverage": null,
+          "calibration": null,
+          "abstained_or_ineligible": 0
+        },
+        "al": {
+          "n_endpoints": 3,
+          "n_patients": 3,
+          "mae": 1.1842378929335002e-15,
+          "rmse": 2.0511601988091347e-15,
+          "bias_predicted_minus_observed": 1.1842378929335002e-15,
+          "interval_coverage": null,
+          "calibration": null,
+          "abstained_or_ineligible": 0
+        }
+      }
+    },
+    "status": "benchmark_only",
+    "approval": null,
+    "validated_for_clinical_use": false,
+    "model_artifact_hash": "743ee9b52296e6bb6d662050b4c6808801bd0250041defb323f4cc8c38eb28e2",
+    "limitations": [
+      "Baselines only; no trained Transformer, mixed-effects or boosted model.",
+      "Prediction intervals, subgroup calibration and prospective validation remain unavailable.",
+      "Input provenance and untreated status require independent data review."
+    ],
+    "record_id": "VAL3-34A01E79063D4CF5BAC6E8A5",
+    "schema_version": "3.0.0-research.1",
+    "created_at": "2026-10-23T09:35:19+00:00"
+  }
+}

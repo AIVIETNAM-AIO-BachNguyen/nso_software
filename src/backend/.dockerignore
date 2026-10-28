@@ -1,0 +1,8 @@
+__pycache__
+*.pyc
+*.db
+*.backup.json
+.env*
+.venv*
+.pytest_cache
+test_*.py

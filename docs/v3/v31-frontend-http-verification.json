@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "route": "/",
+      "status": 200,
+      "assets": 7,
+      "all_assets_200": true
+    },
+    {
+      "route": "/research",
+      "status": 200,
+      "assets": 7,
+      "all_assets_200": true
+    }
+  ]
+}

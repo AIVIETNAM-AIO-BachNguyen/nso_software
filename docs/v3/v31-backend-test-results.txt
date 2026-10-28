@@ -1,0 +1,54 @@
+........................................................................ [ 12%]
+........................................................................ [ 24%]
+................................s....................................... [ 36%]
+........................................................................ [ 49%]
+........................................................................ [ 61%]
+........................................................................ [ 73%]
+........................................................................ [ 86%]
+........................................................................ [ 98%]
+..........                                                               [100%]
+=============================== warnings summary ===============================
+.venv312/lib/python3.12/site-packages/starlette/testclient.py:45
+  /Users/bachng/Coding/nso_software/.venv312/lib/python3.12/site-packages/starlette/testclient.py:45: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+______________ coverage: platform darwin, python 3.12.16-final-0 _______________
+
+Name                                            Stmts   Miss  Cover   Missing
+-----------------------------------------------------------------------------
+src/backend/nso/clinical.py                       206      5    98%   73, 426, 659, 834-835
+src/backend/nso/csf.py                             70      6    91%   89, 117, 132, 139, 145, 148
+src/backend/nso/design/candidates.py               48      2    96%   121-122
+src/backend/nso/design/joint.py                    42      1    98%   58
+src/backend/nso/engineering.py                    232     27    88%   100, 167-169, 188, 191-192, 230, 234, 236, 242, 247, 392, 396-397, 399, 429, 436, 438, 440, 487, 489, 491, 493, 495, 500, 502
+src/backend/nso/features.py                       247      4    98%   352, 446-447, 528
+src/backend/nso/governance.py                     182     25    86%   105, 155-160, 172, 224, 226, 248, 320, 383-401, 408, 410, 413, 453
+src/backend/nso/manufacturing/compensation.py      39      1    97%   56
+src/backend/nso/manufacturing/geometry.py         140      5    96%   79, 86, 90, 276, 307
+src/backend/nso/manufacturing/registry.py         139      5    96%   194, 212, 315, 319, 366
+src/backend/nso/manufacturing/store.py            307      8    97%   84, 170, 176, 193, 385, 440, 591, 653
+src/backend/nso/manufacturing/verification.py      38      3    92%   45, 97-100
+src/backend/nso/pipeline.py                        67      4    94%   78, 225, 230, 235
+src/backend/nso/predictors/base.py                 45      1    98%   127
+src/backend/nso/recipe.py                          64      1    98%   109
+src/backend/nso/research.py                       362     40    89%   91, 123, 128, 185-186, 240, 261-265, 328, 366-367, 415, 425, 434, 567, 637, 639, 643, 651, 783-811, 817-818, 832, 837, 843, 853, 861, 893
+src/backend/nso/research_adaptive.py              359     44    88%   73, 105, 118, 147-148, 154, 158, 166, 172-173, 175, 181-182, 184-185, 191, 213, 243, 256, 263, 275, 282, 295, 330, 382, 542, 580, 584, 588, 597, 618, 642, 648, 657, 669, 687, 709, 715, 742, 752, 767, 823, 834, 838
+src/backend/nso/research_advanced.py              145     18    88%   34, 56, 100-109, 124, 141, 144-145, 153, 157, 186, 190, 215, 269, 425-426
+src/backend/nso/research_causal.py                118     17    86%   46, 52, 62-63, 66-67, 69, 80-81, 84-85, 87, 95, 100, 104, 113, 149
+src/backend/nso/research_contracts.py             145      5    97%   32, 57, 74, 100, 103
+src/backend/nso/research_data.py                   92      7    92%   40, 75, 77, 94, 98, 118, 134
+src/backend/nso/research_learning.py              220      8    96%   60, 105, 126, 132, 136, 142, 348, 454
+src/backend/nso/research_manufacturing.py         224     20    91%   26, 42, 82, 100, 105, 111, 118, 127, 160-165, 184, 237, 245, 256, 352, 358, 503, 560, 571
+src/backend/nso/research_optics.py                160     15    91%   49, 52, 54, 58, 66, 85, 95, 101, 125, 212-214, 234, 271, 279
+src/backend/nso/research_release.py               105     19    82%   94-114, 124, 138-167, 197, 250
+src/backend/nso/research_security.py               86     27    69%   28-30, 37, 39, 51, 58, 61, 82-84, 91-97, 100, 108-111, 113, 119, 122-123, 134, 136
+-----------------------------------------------------------------------------
+TOTAL                                            4532    318    93%
+
+15 files skipped due to complete coverage.
+Coverage JSON written to file /private/tmp/nso-v31-complete-coverage.json
+=========================== short test summary info ============================
+SKIPPED [1] src/backend/test_nso_package.py:673: varies only once element height crosses its threshold
+585 passed, 1 skipped, 1 warning in 305.75s (0:05:05)

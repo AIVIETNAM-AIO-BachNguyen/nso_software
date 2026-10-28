@@ -1,0 +1,57 @@
+name: Verify clinical and research workflows
+on: [push, pull_request]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    env:
+      OMP_NUM_THREADS: "1"
+      NSO_TEST_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/nso_test
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nso_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d nso_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        id: python
+        continue-on-error: true
+        with:
+          python-version: "3.12.16"
+          cache: pip
+          cache-dependency-path: src/backend/requirements-research.lock.txt
+      - name: Build the exact security release if no runner binary exists
+        if: steps.python.outcome == 'failure'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libffi-dev liblzma-dev
+          runtime=$(bash scripts/bootstrap_python312.sh)
+          dirname "$runtime" >> "$GITHUB_PATH"
+      - run: python3.12 -m pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+      - run: python3.12 -m pip install -r src/backend/requirements-research.lock.txt
+      - run: python3.12 -m pytest -q src/backend --cov=src/backend/nso --cov-report=xml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: coverage.xml
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: src/frontend/package-lock.json
+      - run: npm ci
+      - run: npm audit --audit-level=moderate
+      - run: npm test
+      - run: npm run build
