@@ -25,6 +25,7 @@ import hashlib
 import json
 import os
 import time
+from contextlib import asynccontextmanager
 from datetime import date
 from typing import Any, Dict, List, Optional
 
@@ -36,9 +37,20 @@ import nso as v2
 import report
 
 _is_production = os.environ.get("NSO_ENV", "development").lower() == "production"
+
+
+@asynccontextmanager
+async def lifespan(app):
+    from nso.demo_patients import seed_configured_demo
+
+    seed_configured_demo(v2.REGISTRY._store_impl)
+    yield
+
+
 app = FastAPI(
     title="NSO AI-PC Fitting API",
     version="2.2",
+    lifespan=lifespan,
     docs_url=None if _is_production else "/docs",
     redoc_url=None if _is_production else "/redoc",
     openapi_url=None if _is_production else "/openapi.json",

@@ -54,3 +54,7 @@ services:
         value: "false"
       - key: NSO_V3_PRINCIPALS
         sync: false
+      # Opt in to ten clearly labelled synthetic patients for UI rehearsal.
+      # Existing services must set this in Environment and redeploy.
+      - key: NSO_DEMO_PATIENTS_ENABLED
+        value: "false"

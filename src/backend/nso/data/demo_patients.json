@@ -1,0 +1,737 @@
+{
+  "dataset_version": "SYNTHETIC-DEMO-PATIENTS-v1",
+  "synthetic_only": true,
+  "description": "Ten invented patients for UI rehearsal only. Not training, calibration or clinical evidence.",
+  "patients": [
+    {
+      "patient_id": "SYN-DEMO-001",
+      "case_id": "SYN-DEMO-CASE-001",
+      "display_name": "Synthetic patient 01",
+      "age_at_latest_visit": 8,
+      "sex_code": 1,
+      "eyes": {
+        "OD": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 23.27,
+            "se_d": -0.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 23.35,
+            "se_d": -1.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 23.44,
+            "se_d": -1.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ],
+        "OS": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 23.39,
+            "se_d": -1.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 23.47,
+            "se_d": -1.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 23.56,
+            "se_d": -1.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ]
+      }
+    },
+    {
+      "patient_id": "SYN-DEMO-002",
+      "case_id": "SYN-DEMO-CASE-002",
+      "display_name": "Synthetic patient 02",
+      "age_at_latest_visit": 9,
+      "sex_code": 0,
+      "eyes": {
+        "OD": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 23.44,
+            "se_d": -1.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 23.53,
+            "se_d": -1.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 23.62,
+            "se_d": -1.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ],
+        "OS": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 23.56,
+            "se_d": -1.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 23.65,
+            "se_d": -1.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 23.74,
+            "se_d": -1.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ]
+      }
+    },
+    {
+      "patient_id": "SYN-DEMO-003",
+      "case_id": "SYN-DEMO-CASE-003",
+      "display_name": "Synthetic patient 03",
+      "age_at_latest_visit": 10,
+      "sex_code": 1,
+      "eyes": {
+        "OD": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 23.61,
+            "se_d": -1.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 23.7,
+            "se_d": -1.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 23.79,
+            "se_d": -1.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ],
+        "OS": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 23.73,
+            "se_d": -1.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 23.82,
+            "se_d": -1.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 23.91,
+            "se_d": -2.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ]
+      }
+    },
+    {
+      "patient_id": "SYN-DEMO-004",
+      "case_id": "SYN-DEMO-CASE-004",
+      "display_name": "Synthetic patient 04",
+      "age_at_latest_visit": 11,
+      "sex_code": 0,
+      "eyes": {
+        "OD": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 23.78,
+            "se_d": -1.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 23.88,
+            "se_d": -1.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 23.97,
+            "se_d": -2.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ],
+        "OS": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 23.9,
+            "se_d": -1.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.0,
+            "se_d": -2.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.09,
+            "se_d": -2.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ]
+      }
+    },
+    {
+      "patient_id": "SYN-DEMO-005",
+      "case_id": "SYN-DEMO-CASE-005",
+      "display_name": "Synthetic patient 05",
+      "age_at_latest_visit": 12,
+      "sex_code": 1,
+      "eyes": {
+        "OD": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 23.95,
+            "se_d": -1.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.05,
+            "se_d": -2.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.15,
+            "se_d": -2.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ],
+        "OS": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.07,
+            "se_d": -2.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.17,
+            "se_d": -2.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.27,
+            "se_d": -2.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ]
+      }
+    },
+    {
+      "patient_id": "SYN-DEMO-006",
+      "case_id": "SYN-DEMO-CASE-006",
+      "display_name": "Synthetic patient 06",
+      "age_at_latest_visit": 13,
+      "sex_code": 0,
+      "eyes": {
+        "OD": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.12,
+            "se_d": -2.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.22,
+            "se_d": -2.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.33,
+            "se_d": -2.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ],
+        "OS": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.24,
+            "se_d": -2.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.34,
+            "se_d": -2.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.45,
+            "se_d": -2.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ]
+      }
+    },
+    {
+      "patient_id": "SYN-DEMO-007",
+      "case_id": "SYN-DEMO-CASE-007",
+      "display_name": "Synthetic patient 07",
+      "age_at_latest_visit": 14,
+      "sex_code": 1,
+      "eyes": {
+        "OD": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.29,
+            "se_d": -2.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.4,
+            "se_d": -2.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.51,
+            "se_d": -2.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ],
+        "OS": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.41,
+            "se_d": -2.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.52,
+            "se_d": -2.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.63,
+            "se_d": -3.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ]
+      }
+    },
+    {
+      "patient_id": "SYN-DEMO-008",
+      "case_id": "SYN-DEMO-CASE-008",
+      "display_name": "Synthetic patient 08",
+      "age_at_latest_visit": 15,
+      "sex_code": 0,
+      "eyes": {
+        "OD": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.46,
+            "se_d": -2.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.57,
+            "se_d": -2.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.68,
+            "se_d": -3.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ],
+        "OS": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.58,
+            "se_d": -2.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.69,
+            "se_d": -3.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.8,
+            "se_d": -3.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ]
+      }
+    },
+    {
+      "patient_id": "SYN-DEMO-009",
+      "case_id": "SYN-DEMO-CASE-009",
+      "display_name": "Synthetic patient 09",
+      "age_at_latest_visit": 16,
+      "sex_code": 1,
+      "eyes": {
+        "OD": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.63,
+            "se_d": -2.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.75,
+            "se_d": -3.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.86,
+            "se_d": -3.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ],
+        "OS": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.75,
+            "se_d": -3.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.87,
+            "se_d": -3.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 24.98,
+            "se_d": -3.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ]
+      }
+    },
+    {
+      "patient_id": "SYN-DEMO-010",
+      "case_id": "SYN-DEMO-CASE-010",
+      "display_name": "Synthetic patient 10",
+      "age_at_latest_visit": 17,
+      "sex_code": 0,
+      "eyes": {
+        "OD": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.8,
+            "se_d": -3.0,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 24.92,
+            "se_d": -3.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 25.04,
+            "se_d": -3.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ],
+        "OS": [
+          {
+            "visit_at": "2025-11-01",
+            "al_mm": 24.92,
+            "se_d": -3.25,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-05-01",
+            "al_mm": 25.04,
+            "se_d": -3.5,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          },
+          {
+            "visit_at": "2026-11-01",
+            "al_mm": 25.16,
+            "se_d": -3.75,
+            "al_status": "measured",
+            "se_status": "measured",
+            "measurement_method": "Invented demo measurement; no physical measurement",
+            "source": "SYNTHETIC_NOT_CLINICAL_EVIDENCE",
+            "quality_flag": "ACCEPTED"
+          }
+        ]
+      }
+    }
+  ]
+}

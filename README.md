@@ -6,6 +6,10 @@
 
 # NSO AI-PC V2.2 — Clinical Decision Support
 
+Ten synthetic demo patients (both eyes, three visits each) are available via an
+opt-in database seed. See [demo setup](docs/v3/DEMO_PATIENTS.md), including Render
+activation and the explicit patient scope needed for the clinical account.
+
 A knowledge-guided personalization engine exposed through a FastAPI backend
 and a Next.js clinical frontend. It is a clinical-pilot prototype, not an
 autonomous diagnostic or treatment-efficacy prediction system.
