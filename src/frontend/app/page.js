@@ -1,17 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useId } from "react";
 
-const API = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
+import PatientHistory from "./components/PatientHistory";
+import {useWorkspaceState,useWorkspaceCache} from "./components/SessionWorkspace";
+import { blankProfile, baselineFrom, EMPTY_FOLLOWUP, today, checkedJson, clinicalError } from "./lib/clinical";
+
+const API = process.env.NEXT_PUBLIC_API_BASE || "/backend";
 
 const num = (v) => {
-  const n = Number(v);
-  return Number.isNaN(n) ? 0 : n;
+  if(v === "" || v === null || v === undefined || !Number.isFinite(Number(v))) throw new Error("Complete the required numeric measurements before continuing.");
+  return Number(v);
 };
 const orNull = (v) => (v === "" || v === undefined || v === null ? null : num(v));
 
 const RESULT_TIERS = {
-  ready: { bg: "#ecfdf5", border: "#86efac", lbBg: "#dcfce7", lbBorder: "#22c55e", lbColor: "#166534", title: "#14532d", body: "#166534", label: "READY" },
+  ready: { bg: "#f0f5fa", border: "#c6d5e4", lbBg: "#d6e4f1", lbBorder: "#7f9cb8", lbColor: "#385778", title: "#304e6e", body: "#385778", label: "READY" },
   caution: { bg: "#fffbeb", border: "#fcd34d", lbBg: "#fef3c7", lbBorder: "#f59e0b", lbColor: "#92400e", title: "#78350f", body: "#92400e", label: "CAUTION" },
   review: { bg: "#fef2f2", border: "#fca5a5", lbBg: "#fee2e2", lbBorder: "#ef4444", lbColor: "#991b1b", title: "#7f1d1d", body: "#991b1b", label: "REVIEW" },
 };
@@ -56,7 +60,7 @@ const PROCESSING_STAGES = [
 const scoreLabel = (x) => (x >= 80 ? "Excellent" : x >= 65 ? "Good" : x >= 50 ? "Fair" : "Low");
 
 // --------------------------------------------------------------------------
-// Default clinical profile (Tier 1 values are the ones the form starts with).
+// Profile shape. Numeric example values are cleared by blankProfile before entry.
 // --------------------------------------------------------------------------
 
 const DEFAULTS = {
@@ -102,57 +106,77 @@ const RESEARCH_DEFAULTS = {
 const CSF_SCALES = ["index_0_100", "log_cs"];
 
 export default function Page() {
-  const [step, setStep] = useState(1);
-  const [authRequired, setAuthRequired] = useState(true);
+  const [step, setStep] = useWorkspaceState("clinical.step", 1);
+  const [authRequired, setAuthRequired] = useWorkspaceState("clinical.authRequired", true);
   const [accessCode, setAccessCode] = useState("");
-  const [clinicalSession, setClinicalSession] = useState("");
-  const [assignedPatients, setAssignedPatients] = useState([]);
-  const [selectedPatient, setSelectedPatient] = useState("");
+  const [adminUsername, setAdminUsername] = useWorkspaceState("clinical.adminUsername", "nso");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [signingIn, setSigningIn] = useState(false);
+  const [adminSession, setAdminSession] = useWorkspaceState("clinical.adminSession", false);
+  const [clinicalSession, setClinicalSession] = useWorkspaceState("clinical.clinicalSession", "");
+  const [assignedPatients, setAssignedPatients] = useWorkspaceState("clinical.assignedPatients", []);
+  const [selectedPatient, setSelectedPatient] = useWorkspaceState("clinical.selectedPatient", "");
   const requestHeaders = () => ({ "Content-Type": "application/json", ...(clinicalSession ? { Authorization: `Bearer ${clinicalSession}` } : {}) });
-  const [inp, setInp] = useState(DEFAULTS);
-  const [advOpen, setAdvOpen] = useState(false);
-  const [resOpen, setResOpen] = useState(false);
-  const [adv, setAdv] = useState(ADV_DEFAULTS);
-  const [res, setRes] = useState(RESEARCH_DEFAULTS);
-  const [pred, setPred] = useState(null);
-  const [job, setJob] = useState(null);
-  const [approval, setApproval] = useState(null);
+  const [inp, setInp] = useWorkspaceState("clinical.inp", () => blankProfile(DEFAULTS));
+  const [advOpen, setAdvOpen] = useWorkspaceState("clinical.advOpen", false);
+  const [resOpen, setResOpen] = useWorkspaceState("clinical.resOpen", false);
+  const [adv, setAdv] = useWorkspaceState("clinical.adv", ADV_DEFAULTS);
+  const [res, setRes] = useWorkspaceState("clinical.res", RESEARCH_DEFAULTS);
+  const [pred, setPred] = useWorkspaceState("clinical.pred", null);
+  const [job, setJob] = useWorkspaceState("clinical.job", null);
+  const [approval, setApproval] = useWorkspaceState("clinical.approval", null);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState("");
   const [longRunning, setLongRunning] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [err, setErr] = useState(null);
-  const [fu, setFu] = useState({
-    baselineOd: 25.1, followupOd: 25.16, baselineOs: 24.9, followupOs: 24.96,
-    baselineOdSphere: -3.25, currentOdSphere: -3.25,
-    baselineOsSphere: -3.0, currentOsSphere: -3.0,
-    interval: 6, baselineComfort: 7, currentComfort: 7,
-    stress: 3, wear: 10, compliance: "Good",
-    baselineDate: "2026-01-01", followupDate: "2026-07-01",
-    baselineCsf: "", currentCsf: "", adverseEvent: "", intolerance: "",
-  });
-  const followupDefaults = useRef(fu);
-  const [fuRes, setFuRes] = useState(null);
+  const [fu, setFu] = useWorkspaceState("clinical.fu", EMPTY_FOLLOWUP);
+  const followupDefaults = useRef(EMPTY_FOLLOWUP);
+  const [visitDate, setVisitDate] = useWorkspaceState("clinical.visitDate", today);
+  const [reviewing, setReviewing] = useWorkspaceState("clinical.reviewing", false);
+  const [patientSearch, setPatientSearch] = useWorkspaceState("clinical.patientSearch", "");
+  const [serviceState, setServiceState] = useWorkspaceState("clinical.serviceState", "Connecting");
+  const workspaceCache=useWorkspaceCache();
+  const drafts = useRef(workspaceCache?.current.clinicalDrafts || {});
+  if(workspaceCache)workspaceCache.current.clinicalDrafts=drafts.current;
+  const operation = useRef(0);
+  const [baselineHistory, setBaselineHistory] = useWorkspaceState("clinical.baselineHistory", []);
+  const [fuRes, setFuRes] = useWorkspaceState("clinical.fuRes", null);
   const [fuPending, setFuPending] = useState(false);
   const followupRequest = useRef(0);
+
+  useEffect(() => () => {operation.current++;followupRequest.current++;}, []);
 
   // Wake the API while the clinician completes the form. This reduces the
   // impact of a sleeping server without sending any patient data.
   useEffect(() => {
     const controller = new AbortController();
     fetch(`${API}/api/health`, { cache: "no-store", signal: controller.signal })
-      .then(r=>r.json()).then(data=>setAuthRequired(data.authentication_required !== false)).catch(() => {});
+      .then(r=>r.json()).then(data=>{setAuthRequired(data.authentication_required !== false);setServiceState("Connected");}).catch(() => setServiceState("Unavailable"));
     return () => controller.abort();
   }, []);
 
   function clearClinicalData() {
+    operation.current += 1;
     followupRequest.current += 1;
-    setInp(DEFAULTS); setAdv(ADV_DEFAULTS); setRes(RESEARCH_DEFAULTS); setFu(followupDefaults.current);
+    setReviewing(false); setBaselineHistory([]); setErr(null);
+    setInp(blankProfile(DEFAULTS)); setAdv(ADV_DEFAULTS); setRes(RESEARCH_DEFAULTS); setFu(followupDefaults.current);
     setPred(null); setJob(null); setApproval(null); setFuRes(null); setStep(1);
   }
   function closeClinicalSession() {
+    if (adminSession && clinicalSession) fetch(`${API}/api/v3/auth/clinical-admin/logout`, {method:"POST", headers:requestHeaders()}).catch(()=>{});
+    drafts.current = {};
+    if(workspaceCache) workspaceCache.current = {};
+    setAdminSession(false); setAdminPassword("");
     setClinicalSession(""); setAssignedPatients([]); setSelectedPatient(""); clearClinicalData();
+  }
+  async function clinicalJson(response) {
+    if(response.status === 401) {
+      closeClinicalSession();
+      throw new Error("Your session has expired. Sign in again to continue.");
+    }
+    return checkedJson(response);
   }
   useEffect(() => {
     if (!clinicalSession) return;
@@ -163,9 +187,40 @@ export default function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[clinicalSession]);
 
-  const set = (k) => (e) => setInp({ ...inp, [k]: e.target.value });
-  const setA = (k) => (e) => setAdv({ ...adv, [k]: e.target.value });
-  const setR = (k) => (e) => setRes({ ...res, [k]: e.target.value });
+  async function signInAdmin(e) {
+    e.preventDefault(); setSigningIn(true); setErr(null);
+    let credential;
+    try {
+      const response = await fetch(`${API}/api/v3/auth/clinical-admin/login`, {
+        method: "POST", headers: {"Content-Type":"application/json"}, cache:"no-store",
+        body: JSON.stringify({username:adminUsername, password:adminPassword}),
+      });
+      const result = await checkedJson(response);
+      if (!response.ok) throw new Error(result.detail?.message || "Sign-in failed");
+      credential = result.access_token;
+      const assigned = await fetch(`${API}/api/v3/cases`, {headers:{Authorization:`Bearer ${credential}`}, cache:"no-store"});
+      const data = await checkedJson(assigned);
+      if (!assigned.ok) throw new Error(data.detail?.message || "Unable to load assigned patients");
+      clearClinicalData();
+      setAssignedPatients([...new Set(data.cases.map(c=>c.patient_id))]);
+      setSelectedPatient(data.cases[0]?.patient_id || "");
+      setClinicalSession(credential); setAdminSession(true);
+    } catch(error) {
+      if (credential) fetch(`${API}/api/v3/auth/clinical-admin/logout`, {method:"POST",headers:{Authorization:`Bearer ${credential}`}}).catch(()=>{});
+      setErr(clinicalError(error));
+    } finally { setAdminPassword(""); setSigningIn(false); }
+  }
+
+  function invalidateClinical() { operation.current++; followupRequest.current++; setPred(null); setApproval(null); setJob(null); setFuRes(null); setReviewing(false); }
+  const set = k => e => { invalidateClinical(); setInp({...inp,[k]:e.target.value}); };
+  const setA = k => e => { invalidateClinical(); setAdv({...adv,[k]:e.target.value}); };
+  const setR = k => e => { invalidateClinical(); setRes({...res,[k]:e.target.value}); };
+  function selectPatient(id) {
+    if(selectedPatient) drafts.current[selectedPatient]={inp,adv,res,fu,pred,approval,job,visitDate,baselineHistory};
+    clearClinicalData(); setSelectedPatient(id);
+    const saved=drafts.current[id];
+    if(saved) { setInp(saved.inp);setAdv(saved.adv);setRes(saved.res);setFu(saved.fu);setPred(saved.pred);setApproval(saved.approval);setJob(saved.job);setVisitDate(saved.visitDate);setBaselineHistory(saved.baselineHistory); }
+  }
 
   function predictBody() {
     return {
@@ -251,7 +306,7 @@ export default function Page() {
       const r = await fetch(`${API}${path}`, {
         method: "POST", headers: requestHeaders(), body: JSON.stringify(body),
       });
-      if (!r.ok) throw new Error(`API error ${r.status}`);
+      if (!r.ok) await checkedJson(r);
       const blob = await r.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -259,7 +314,7 @@ export default function Page() {
       document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
     } catch (e) {
-      setErr(`Report download failed: ${e}. Is the backend running on ${API}?`);
+      setErr(clinicalError(e));
     }
   }
 
@@ -284,6 +339,7 @@ export default function Page() {
     }, "nso-report.pdf");
 
   async function runPredict() {
+    const requestVersion = ++operation.current;
     setLoading(true);
     setProgress("");
     setLongRunning(false);
@@ -291,35 +347,26 @@ export default function Page() {
     setErr(null);
     setJob(null);
     setApproval(null);
-    let stage = 0;
-    let progressTimer = null;
     const started = Date.now();
-    const elapsedTimer = window.setInterval(() => {
-      setElapsedSeconds(Math.floor((Date.now() - started) / 1000));
-    }, 1000);
-    const longTimer = window.setTimeout(() => {
-      setLongRunning(true);
-      setProgress(PROCESSING_STAGES[0]);
-      progressTimer = window.setInterval(() => {
-        stage = Math.min(stage + 1, PROCESSING_STAGES.length - 1);
-        setProgress(PROCESSING_STAGES[stage]);
-      }, 2500);
-    }, 10000);
+    const elapsedTimer = window.setInterval(() => setElapsedSeconds(Math.floor((Date.now()-started)/1000)), 1000);
+    const longTimer = window.setTimeout(() => {setLongRunning(true);setProgress("Waiting for the assessment service…");}, 10000);
     try {
       const r = await fetch(`${API}/api/predict`, {
         method: "POST", headers: requestHeaders(),
         body: JSON.stringify(predictBody()),
       });
-      if (!r.ok) throw new Error(`API error ${r.status}`);
-      setPred(await r.json());
+      if (!r.ok) await clinicalJson(r);
+      const result = await clinicalJson(r);
+      if(requestVersion !== operation.current) return;
+      setPred(result); setFu(baselineFrom(inp,visitDate)); setBaselineHistory(h=>[...h,{date:visitDate,design:result.design_id}]);
       setStep(2);
       window.scrollTo(0, 0);
     } catch (e) {
-      setErr(`${e}. Is the backend running on ${API}?`);
+      if(requestVersion === operation.current) setErr(clinicalError(e));
     } finally {
       window.clearTimeout(longTimer);
       window.clearInterval(elapsedTimer);
-      if (progressTimer) window.clearInterval(progressTimer);
+
       setProgress("");
       setLongRunning(false);
       setLoading(false);
@@ -328,6 +375,7 @@ export default function Page() {
 
   async function approveDesign() {
     if (!pred) return;
+    const version=operation.current;
     setSubmitting(true);
     setErr(null);
     try {
@@ -335,8 +383,8 @@ export default function Page() {
         method: "POST", headers: requestHeaders(),
         body: JSON.stringify({ design_id: pred.design_id }),
       });
-      if (!r.ok) throw new Error(`API error ${r.status}`);
-      setApproval(await r.json());
+      if (!r.ok) await clinicalJson(r);
+      const result=await clinicalJson(r); if(version !== operation.current) return; setApproval(result);
     } catch (e) {
       setErr(`Approval failed: ${e}.`);
     } finally {
@@ -346,6 +394,7 @@ export default function Page() {
 
   async function submitToManufacturing() {
     if (!pred) return;
+    const version=operation.current;
     setSubmitting(true);
     setErr(null);
     try {
@@ -353,8 +402,8 @@ export default function Page() {
         method: "POST", headers: requestHeaders(),
         body: JSON.stringify({ design_id: pred.design_id }),
       });
-      if (!r.ok) throw new Error(`API error ${r.status}`);
-      setJob(await r.json());
+      if (!r.ok) await clinicalJson(r);
+      const result=await clinicalJson(r); if(version !== operation.current) return; setJob(result);
     } catch (e) {
       setErr(`Manufacturing submission failed: ${e}.`);
     } finally {
@@ -363,7 +412,8 @@ export default function Page() {
   }
 
   async function runRefit() {
-    if (!pred) return;
+    if (!pred || !fuRes || fuPending) return;
+    const version=operation.current;
     setSubmitting(true);
     setErr(null);
     try {
@@ -372,14 +422,20 @@ export default function Page() {
         method: "POST", headers: requestHeaders(),
         body: JSON.stringify({
           ...predictBody(),
+          od: {...predictBody().od, sphere:num(fu.currentOdSphere), axial_length:num(fu.followupOd)},
+          os: {...predictBody().os, sphere:num(fu.currentOsSphere), axial_length:num(fu.followupOs)},
           previous_design_id: pred.design_id,
           baseline_al: useOd ? num(fu.baselineOd) : num(fu.baselineOs),
           followup_al: useOd ? num(fu.followupOd) : num(fu.followupOs),
           interval_months: fuRes ? fuRes.interval_months : Math.round(num(fu.interval)),
         }),
       });
-      if (!r.ok) throw new Error(`API error ${r.status}`);
-      setPred(await r.json());
+      if (!r.ok) await clinicalJson(r);
+      const result=await clinicalJson(r); if(version !== operation.current) return; setPred(result);
+      const updated={...inp,odSphere:fu.currentOdSphere,osSphere:fu.currentOsSphere,odAl:fu.followupOd,osAl:fu.followupOs};
+      setInp(updated);setVisitDate(fu.followupDate || visitDate);setFu(baselineFrom(updated,fu.followupDate || visitDate));setFuRes(null);
+      setBaselineHistory(h=>[...h,{date:fu.followupDate || visitDate,design:result.design_id}]);
+      setApproval(null);
       setJob(null);
       setStep(2);
       window.scrollTo(0, 0);
@@ -392,8 +448,9 @@ export default function Page() {
 
   async function runFollowup(next) {
     const s = next || fu;
+    if(s.baselineDate && s.followupDate && s.followupDate <= s.baselineDate) {setFuRes(null);setErr("Follow-up date must be after the baseline date.");return;}
     const requestId = ++followupRequest.current;
-    setFuPending(true);
+    setFuPending(true); setFuRes(null); setErr(null);
     try {
       const r = await fetch(`${API}/api/followup`, {
         method: "POST", headers: requestHeaders(),
@@ -416,11 +473,11 @@ export default function Page() {
           followup_os_refraction: { sphere: num(s.currentOsSphere) },
         }),
       });
-      if (r.ok) {
-        const body = await r.json();
+      {
+        const body = await clinicalJson(r);
         if (requestId === followupRequest.current) setFuRes(body);
       }
-    } catch (e) { /* keep the last complete assessment during a transient error */ }
+    } catch (e) { if(requestId === followupRequest.current) {setFuRes(null);setErr(clinicalError(e));} }
     finally {
       if (requestId === followupRequest.current) setFuPending(false);
     }
@@ -429,47 +486,49 @@ export default function Page() {
   function goFollowup() {
     setStep(3);
     window.scrollTo(0, 0);
-    runFollowup();
+
   }
 
   const setFuVal = (k) => (e) => {
     const nextFu = { ...fu, [k]: e.target.value };
     setFu(nextFu);
-    runFollowup(nextFu);
+    followupRequest.current++; setFuPending(false); setFuRes(null); setErr(null);
   };
 
   return (
-    <div className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <span className="brand-mark" />
-          <span className="brand-name">NSO AI-PC Fitting Platform</span>
-          <span className="brand-ver">V2.2 · Clinical Decision Support — Knowledge-guided personalization engine</span>
-        </div>
-        <div className="badge">
-          <span className="badge-dot" />
-          <span className="badge-text">Clinical pilot</span>
-        </div>
-      </div>
-
-      <div className="research-entry"><a href="/research">V3 research workspace →</a><span>Longitudinal forecasts, intervention studies & optical research</span></div>
-
-      {authRequired && <section className="card research-session">
-        {!clinicalSession ? <form onSubmit={async e=>{e.preventDefault();try{const response=await fetch(`${API}/api/v3/cases`,{headers:{Authorization:`Bearer ${accessCode}`},cache:"no-store"});const data=await response.json();if(!response.ok)throw new Error(data.detail?.message || "Access was not authorized");setAssignedPatients([...new Set(data.cases.map(c=>c.patient_id))]);setSelectedPatient(data.cases[0]?.patient_id || "");setClinicalSession(accessCode);setAccessCode("");setErr(null);}catch(error){setErr(error.message);}}}>
+    <div className="wrap clinical-wrap">
+      <div className="workspace-heading"><div><h1>Patient care</h1><p className="note clinical-version">V2.2 · Clinical Decision Support — Knowledge-guided personalization engine</p></div><span className={`connection-state ${serviceState === "Unavailable" ? "offline" : ""}`} role="status">{serviceState === "Connected" ? "● Service connected" : serviceState === "Unavailable" ? "● Service unavailable · entries remain in this session" : "● Connecting to service"}</span></div>
+      <section className="card clinical-login">
+        {!clinicalSession && <form onSubmit={signInAdmin}>
+          <p className="eyebrow">SECURE ACCESS</p><h2>Sign in to your workspace</h2><p className="research-copy">Access your assigned patient records with your clinical account.</p>
+          <div className="grid2">
+            <label className="field">Username<input autoComplete="username" required value={adminUsername} onChange={e=>setAdminUsername(e.target.value)} disabled={signingIn} /></label>
+            <label className="field">Password<input type="password" autoComplete="current-password" required value={adminPassword} onChange={e=>setAdminPassword(e.target.value)} disabled={signingIn} /></label>
+          </div>
+          <button className="btn btn-primary" disabled={signingIn}>{signingIn ? "Signing in…" : "Sign in"}</button>
+        </form>}
+        {authRequired && !clinicalSession && <details className="research-details"><summary>Use a clinical access code</summary>
+        {!clinicalSession ? <form onSubmit={async e=>{e.preventDefault();try{const response=await fetch(`${API}/api/v3/cases`,{headers:{Authorization:`Bearer ${accessCode}`},cache:"no-store"});const data=await response.json();if(!response.ok)throw new Error(data.detail?.message || "Access was not authorized");setAssignedPatients([...new Set(data.cases.map(c=>c.patient_id))]);setSelectedPatient(data.cases[0]?.patient_id || "");setClinicalSession(accessCode);setAccessCode("");setErr(null);}catch(error){setErr(clinicalError(error));}}}>
           <label className="field">Clinical session access code<input type="password" autoComplete="off" required value={accessCode} onChange={e=>setAccessCode(e.target.value)} /></label><button className="btn btn-primary">Connect assigned patients</button>
-        </form> : <><label className="field">Assigned patient<select value={selectedPatient} disabled={loading || submitting || fuPending} onChange={e=>{setSelectedPatient(e.target.value);clearClinicalData();}}>{assignedPatients.map(p=><option key={p}>{p}</option>)}</select></label><button className="btn btn-ghost" onClick={closeClinicalSession}>Disconnect</button></>}
-      </section>}
+        </form> : null}</details>}
+        {clinicalSession && <div className="research-session"><label className="field">Find patient<input type="search" placeholder="Search by patient ID" value={patientSearch} onChange={e=>setPatientSearch(e.target.value)} /></label><label className="field">Assigned patient<select value={selectedPatient} aria-label="Assigned patient" disabled={loading || submitting || fuPending} onChange={e=>selectPatient(e.target.value)}>{assignedPatients.filter(p=>p.toLowerCase().includes(patientSearch.toLowerCase()) || p===selectedPatient).map(p=><option key={p}>{p}</option>)}</select></label><label className="field">Assessment date<input aria-label="Assessment date" type="date" required max={today()} value={visitDate} disabled={loading || submitting || step !== 1} onInput={e=>{invalidateClinical();setVisitDate(e.currentTarget.value);}} onChange={e=>{invalidateClinical();setVisitDate(e.target.value);}} /></label><div className="clinical-session-actions"><span className="note">{adminSession ? adminUsername : "Clinical session"}</span><button className="btn btn-ghost" onClick={closeClinicalSession}>Sign out</button></div></div>}
+      </section>
       {err && <div className="err" role="alert">{err}</div>}
 
+      {(!authRequired || (clinicalSession && selectedPatient)) && <p className="assessment-source">Manual assessment · verify current measurements. Drafts are retained in this session.</p>}
+      {!authRequired && !clinicalSession && <label className="field">Assessment date<input aria-label="Assessment date" type="date" required max={today()} value={visitDate} disabled={loading || submitting || step !== 1} onInput={e=>{invalidateClinical();setVisitDate(e.currentTarget.value);}} onChange={e=>{invalidateClinical();setVisitDate(e.target.value);}} /></label>}
+      {clinicalSession && selectedPatient && <PatientHistory patient={selectedPatient} session={clinicalSession} />}
+      {baselineHistory.length > 0 && <details className="visit-history"><summary>Assessment activity · {baselineHistory.length} recommendation(s) in this session</summary>{baselineHistory.map((v,i)=><p key={i}>{v.date} · {v.design}</p>)}</details>}
       {(!authRequired || (clinicalSession && selectedPatient)) && step === 1 && (
         <Screen1
           inp={inp} set={set} setInp={setInp}
           adv={adv} setA={setA} setAdv={setAdv} advOpen={advOpen} setAdvOpen={setAdvOpen}
           res={res} setR={setR} resOpen={resOpen} setResOpen={setResOpen}
           loading={loading} progress={progress} longRunning={longRunning}
-          elapsedSeconds={elapsedSeconds} run={runPredict}
-          go={(i) => (i === 2 ? goFollowup() : i === 1 && pred && setStep(2))} />
+          hasResult={!!pred} elapsedSeconds={elapsedSeconds} run={()=>{ if(!visitDate || visitDate > today()) {setErr("Choose an assessment date on or before today.");return;} setReviewing(true); }}
+          go={(i) => (i === 2 && pred ? goFollowup() : i === 1 && pred && setStep(2))} />
       )}
+      {reviewing && step === 1 && <section className="review-panel card" aria-label="Review assessment"><p className="eyebrow">REVIEW BEFORE GENERATING</p><h2>Confirm the clinical profile</h2><p>{selectedPatient || "Local assessment"} · {visitDate} · Age {inp.age}</p><div className="grid2"><p>Right eye: {inp.odSphere} D / {inp.odCyl} D × {inp.odAxis}° · AL {inp.odAl} mm</p><p>Left eye: {inp.osSphere} D / {inp.osCyl} D × {inp.osAxis}° · AL {inp.osAl} mm</p></div><p>Goal: {inp.primary_goal}. All results require clinical review.</p><div className="research-actions"><button className="btn btn-ghost" disabled={loading} onClick={()=>setReviewing(false)}>Continue editing</button><button className="btn btn-primary" disabled={loading} onClick={runPredict}>{loading ? `Generating · ${elapsedSeconds}s` : "Confirm & generate recommendation"}</button></div></section>}
       {(!authRequired || clinicalSession) && step === 2 && pred && (
         <Screen2 pred={pred} job={job} approval={approval} submitting={submitting}
           onApprove={approveDesign}
@@ -480,8 +539,8 @@ export default function Page() {
       {(!authRequired || clinicalSession) && step === 3 && (
         <Screen3 fu={fu} setFuVal={setFuVal} res={fuRes} pending={fuPending}
           designId={pred?.design_id} onDownload={downloadFollowupReport}
-          onRefit={runRefit} canRefit={!!pred} refitting={submitting}
-          go={(i) => (i === 0 ? setStep(1) : i === 1 ? setStep(2) : null)} />
+          onRefit={runRefit} canRefit={!!pred && !!fuRes && !fuPending} refitting={submitting}
+          go={(i) => (i === 0 ? setStep(1) : i === 1 && pred ? setStep(2) : null)} onAssess={runFollowup} />
       )}
     </div>
   );
@@ -495,8 +554,8 @@ export default function Page() {
 // design engine is not steerable from the client.
 // --------------------------------------------------------------------------
 
-function Crumbs({ step, go }) {
-  const items = ["Clinical input", "Personalized design", "Follow-up visit"];
+function Crumbs({ step, go, hasResult = true }) {
+  const items = ["Clinical input", "Review recommendation", "Follow-up visit"];
   const active = step - 1;
   return (
     <div className="crumbs">
@@ -504,7 +563,7 @@ function Crumbs({ step, go }) {
         <span key={label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
           {i > 0 && <span className="crumb-sep">→</span>}
           {i === active ? <span className="crumb active">{label}</span>
-            : <button className="crumb" onClick={() => go(i)}>{label}</button>}
+            : <button type="button" disabled={!hasResult && i > 0} className="crumb" onClick={() => go(i)}>{label}</button>}
         </span>
       ))}
     </div>
@@ -512,11 +571,11 @@ function Crumbs({ step, go }) {
 }
 
 function Screen1({ inp, set, setInp, adv, setA, setAdv, advOpen, setAdvOpen,
-  res, setR, resOpen, setResOpen, loading, progress, longRunning, elapsedSeconds, run, go }) {
+  res, setR, resOpen, setResOpen, loading, progress, longRunning, elapsedSeconds, run, go, hasResult }) {
   return (
-    <div>
-      <Crumbs step={1} go={go} />
-      <h1 className="title">Clinical Decision Support</h1>
+    <form onSubmit={e=>{e.preventDefault();run();}}>
+      <Crumbs step={1} go={go} hasResult={hasResult} />
+      <h2 className="title">Clinical assessment</h2>
       <p className="sub">
         Quick Fitting needs the core clinical profile only. Extended measurements are
         optional — they raise prediction confidence but are not required.
@@ -560,7 +619,7 @@ function Screen1({ inp, set, setInp, adv, setA, setAdv, advOpen, setAdvOpen,
           <Slider label="Total near load" unit="h/day" min="0" max="14" step="0.5"
             value={inp.near_hours} onChange={set("near_hours")} hint="All close work, including screens" />
           <Slider label="Digital portion of near load" unit="h/day" min="0" max={inp.near_hours || 0} step="0.5"
-            value={Math.min(num(inp.digital_hours), num(inp.near_hours))} onChange={set("digital_hours")} />
+            value={inp.digital_hours} onChange={set("digital_hours")} />
           <Slider label="Outdoor activity" unit="h/day" min="0" max="8" step="0.5"
             value={inp.outdoor_hours} onChange={set("outdoor_hours")} hint="Target ≥ 2 h/day" />
         </div>
@@ -627,7 +686,7 @@ function Screen1({ inp, set, setInp, adv, setA, setAdv, advOpen, setAdvOpen,
           </div>
           <label className="check">
             <input type="checkbox" checked={adv.night_driving}
-              onChange={(e) => setAdv({ ...adv, night_driving: e.target.checked })} />
+              onChange={(e) => { setA("night_driving")({target:{value:e.target.checked}}); }} />
             <span>Night driving</span>
           </label>
         </Disclosure>
@@ -714,12 +773,12 @@ function Screen1({ inp, set, setInp, adv, setA, setAdv, advOpen, setAdvOpen,
                 : `Generating secure recommendation · ${elapsedSeconds}s (target 3–8s)`
               : "The recommendation is prepared securely from the clinical dataset."}
           </span>
-          <button className="btn btn-primary" disabled={loading} onClick={run}>
-            {loading ? (longRunning ? progress : "Generating…") : "Generate Personalized Design"}
+          <button className="btn btn-primary" disabled={loading} type="submit">
+            {loading ? (longRunning ? progress : "Generating…") : "Review clinical profile"}
           </button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
 
@@ -736,7 +795,7 @@ function TierHead({ n, title, note }) {
 function Disclosure({ open, toggle, label, note, children }) {
   return (
     <div style={{ marginBottom: 10 }}>
-      <button className="crumb" style={{ font: "500 12px Inter", color: "#78716c" }} onClick={toggle}>
+      <button type="button" aria-expanded={open} className="crumb" style={{ font: "500 12px Inter", color: "var(--color-clinical-blue)" }} onClick={toggle}>
         {open ? "▾" : "▸"} {label}
       </button>
       <span className="note" style={{ fontSize: 11, marginLeft: 8 }}>{note}</span>
@@ -748,15 +807,15 @@ function Disclosure({ open, toggle, label, note, children }) {
 function EyeBlock({ eye, prefix, inp, set }) {
   const k = (s) => `${prefix}${s}`;
   return (
-    <div className="eye-card">
-      <div className="cap cap-sm" style={{ marginBottom: 12 }}>{eye}</div>
+    <fieldset className="eye-card">
+      <legend className="cap cap-sm">{eye}</legend>
       <div className="grid2">
         <NumField label="Sphere" unit="D" step="0.25" value={inp[k("Sphere")]} onChange={set(k("Sphere"))} />
         <NumField label="Cylinder" unit="D" step="0.25" value={inp[k("Cyl")]} onChange={set(k("Cyl"))} />
         <NumField label="Axis" unit="°" step="1" value={inp[k("Axis")]} onChange={set(k("Axis"))} />
         <NumField label="Axial length" unit="mm" step="0.01" value={inp[k("Al")]} onChange={set(k("Al"))} />
       </div>
-    </div>
+    </fieldset>
   );
 }
 
@@ -765,43 +824,49 @@ function EyeBlock({ eye, prefix, inp, set }) {
 // Showing that is not cosmetic: an unmarked dead field makes a clinician
 // believe a measurement influenced the design when it did not.
 function NumField({ label, unit, step, value, onChange, pending }) {
+  const id = useId();
+  const min = /axis/i.test(label) ? 0 : /AL|Axial length/.test(label) ? 18 : label === "Age" ? 3 : /sphere|cylinder/i.test(label) ? -20 : unit?.includes("/ 10") ? 0 : undefined;
+  const max = /axis/i.test(label) ? 180 : /AL|Axial length/.test(label) ? 35 : label === "Age" ? 100 : /sphere|cylinder/i.test(label) ? 20 : unit?.includes("/ 10") ? 10 : undefined;
   return (
     <div className={pending ? "field field-pending" : "field"}>
-      <label>
+      <label htmlFor={id}>
         {label}{unit ? <span className="unit"> · {unit}</span> : null}
         {pending && <span className="pending-tag" title={PENDING_HINT}>{pending}</span>}
       </label>
-      <input type="number" step={step} value={value} onChange={onChange} />
+      <input id={id} required={!unit?.includes("optional") && !unit?.includes("legacy") && !pending} type="number" step={step} min={min} max={max} value={value} onChange={onChange} />
     </div>
   );
 }
 
 function TextField({ label, unit, value, onChange, placeholder }) {
+  const id = useId();
   return (
     <div className="field">
-      <label>{label}{unit ? <span className="unit"> · {unit}</span> : null}</label>
-      <input type="text" value={value} onChange={onChange} placeholder={placeholder} />
+      <label htmlFor={id}>{label}{unit ? <span className="unit"> · {unit}</span> : null}</label>
+      <input id={id} type="text" value={value} onChange={onChange} placeholder={placeholder} />
     </div>
   );
 }
 
 function DateField({ label, value, onChange }) {
+  const id = useId();
   return (
     <div className="field">
-      <label>{label}</label>
-      <input type="date" value={value} onChange={onChange} />
+      <label htmlFor={id}>{label}</label>
+      <input id={id} required type="date" value={value} onInput={onChange} onChange={onChange} />
     </div>
   );
 }
 
 function SelectField({ label, unit, value, onChange, options, pending }) {
+  const id = useId();
   return (
     <div className={pending ? "field field-pending" : "field"}>
-      <label>
+      <label htmlFor={id}>
         {label}{unit ? <span className="unit"> · {unit}</span> : null}
         {pending && <span className="pending-tag" title={PENDING_HINT}>{pending}</span>}
       </label>
-      <select value={value} onChange={onChange}>
+      <select id={id} value={value} onChange={onChange}>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
     </div>
@@ -821,13 +886,14 @@ function ReadRow({ label, value }) {
 }
 
 function Slider({ label, unit, min, max, step, value, onChange, hint }) {
+  const id = useId();
   return (
     <div className="slider">
       <div className="slider-head">
-        <label>{label}</label>
+        <label htmlFor={id}>{label}</label>
         <span className="slider-val">{value} <span className="unit">{unit}</span></span>
       </div>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={onChange} />
+      <input id={id} type="number" required min={min} max={max} step={step} value={value} onChange={onChange} />
       {hint && <span className="note" style={{ fontSize: 11 }}>{hint}</span>}
     </div>
   );
@@ -847,15 +913,16 @@ function Screen2({ pred, job, approval, submitting, onApprove, onSubmit, go, onF
   return (
     <div>
       <Crumbs step={2} go={go} />
-      <h1 className="title" style={{ fontSize: 28, marginBottom: 2 }}>Individual Visual Phenotype</h1>
+      <h2 className="title" style={{ fontSize: 28, marginBottom: 2 }}>Recommendation review</h2>
       <p className="sub" style={{ fontSize: 13, marginBottom: 14 }}>
         Decision-support scores are relative fit indicators, not efficacy probabilities.
       </p>
 
+      <section className="recommendation-summary card"><p className="eyebrow">CLINICAL REVIEW</p><h2>{pred.clinical_recommendation}</h2><p>Confidence: {pred.prediction_confidence_category} · {conf}%. Recommended review: {pred.recommended_follow_up}.</p><p className="note">{job ? "Approved design submitted. Follow its manufacturing status and schedule follow-up." : approval ? "Review complete. You can submit this approved version." : "Review the reasons and clinical guidance below before approving this design."}</p></section>
       <div className="design-hero">
         <div>
           <div className="metric-cap">RECOMMENDED PERSONALIZED OPTICAL DESIGN</div>
-          <div className="design-id">{pred.design_id} · {pred.design_version}</div>
+          <div className="design-id" title="Design reference">{pred.design_id} · {pred.design_version}</div>
           <div className="metric-sub">
             Phenotype {pred.phenotype.code} · {pred.binocular_pair} pair · optimized for {pred.optimization_objective.toLowerCase()}
           </div>
@@ -891,6 +958,26 @@ function Screen2({ pred, job, approval, submitting, onApprove, onSubmit, go, onF
         )}
       </div>
 
+      <div className="card" style={{ padding: 20, marginBottom: 16 }}>
+        <div className="cap cap-sm" style={{ marginBottom: 12 }}>KEY CLINICAL CONTRIBUTORS</div>
+        <div className="grid2" style={{ marginBottom: 14 }}>
+          {pred.key_clinical_contributors.map((item) => (
+            <ReadRow key={item.factor} label={item.factor}
+              value={`${item.observed_value} · clinical relevance ${item.relative_influence}`} />
+          ))}
+        </div>
+        <div className="cap cap-sm" style={{ marginBottom: 12 }}>WHY THIS RECOMMENDATION</div>
+        <ul className="reasons">
+          {pred.explainable_summary.map((line, i) => <li key={i}>{line}</li>)}
+        </ul>
+        <div className="cap cap-sm" style={{ margin: "16px 0 8px" }}>CLINICAL GUIDANCE</div>
+        <ul className="reasons">
+          {pred.clinical_guidance.map((line, i) => <li key={i}>{line}</li>)}
+        </ul>
+        <div className="ip-note">Authorized record <strong>{pred.design_id}</strong> is held in the secure vault.</div>
+      </div>
+
+      <details className="card research-details" style={{marginBottom:20}}><summary>Detailed phenotype & model indicators</summary>
       <div className="cap cap-sm" style={{ margin: "20px 0 10px" }}>VISUAL PHENOTYPE — FIVE DOMAINS</div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginBottom: 20 }}>
         {pred.phenotype.domains.map((d) => (
@@ -962,24 +1049,7 @@ function Screen2({ pred, job, approval, submitting, onApprove, onSubmit, go, onF
         </div>
       )}
 
-      <div className="card" style={{ padding: 20, marginBottom: 16 }}>
-        <div className="cap cap-sm" style={{ marginBottom: 12 }}>KEY CLINICAL CONTRIBUTORS</div>
-        <div className="grid2" style={{ marginBottom: 14 }}>
-          {pred.key_clinical_contributors.map((item) => (
-            <ReadRow key={item.factor} label={item.factor}
-              value={`${item.observed_value} · clinical relevance ${item.relative_influence}`} />
-          ))}
-        </div>
-        <div className="cap cap-sm" style={{ marginBottom: 12 }}>WHY THIS RECOMMENDATION</div>
-        <ul className="reasons">
-          {pred.explainable_summary.map((line, i) => <li key={i}>{line}</li>)}
-        </ul>
-        <div className="cap cap-sm" style={{ margin: "16px 0 8px" }}>CLINICAL GUIDANCE</div>
-        <ul className="reasons">
-          {pred.clinical_guidance.map((line, i) => <li key={i}>{line}</li>)}
-        </ul>
-        <div className="ip-note">Authorized record <strong>{pred.design_id}</strong> is held in the secure vault.</div>
-      </div>
+      </details>
 
       {job && (
         <div className="card" style={{ padding: 20, marginBottom: 16 }}>
@@ -1028,14 +1098,14 @@ function Screen2({ pred, job, approval, submitting, onApprove, onSubmit, go, onF
 
 const FlowStep = ({ label, value, highlight }) => (
   <div style={{
-    flex: "1 1 0", minWidth: 110, background: highlight ? "#e6f1fb" : "var(--track)",
-    border: highlight ? "1px solid #3398e1" : "1px solid var(--border)",
+    flex: "1 1 0", minWidth: 110, background: highlight ? "var(--color-mist-gray)" : "var(--track)",
+    border: highlight ? "1px solid #dedee1" : "1px solid var(--border)",
     borderRadius: 8, padding: "10px 12px",
   }}>
     <div style={{ font: "600 10px Inter", letterSpacing: "0.06em", color: "var(--warm)", marginBottom: 4 }}>
       {label.toUpperCase()}
     </div>
-    <div style={{ font: "500 16px Inter", color: highlight ? "#185fa5" : "var(--ink)" }}>{value}</div>
+    <div style={{ font: "500 16px Inter", color: highlight ? "#17191c" : "var(--ink)" }}>{value}</div>
   </div>
 );
 
@@ -1060,7 +1130,7 @@ function Metric({ cap, big, sub }) {
   );
 }
 
-function Screen3({ fu, setFuVal, res, pending, designId, go, onDownload, onRefit, canRefit, refitting }) {
+function Screen3({ fu, setFuVal, res, pending, designId, go, onDownload, onRefit, canRefit, refitting, onAssess }) {
   const fmt = (x) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
   const tier = res ? FU_TIERS[res.progression_band] : null;
 
@@ -1074,7 +1144,7 @@ function Screen3({ fu, setFuVal, res, pending, designId, go, onDownload, onRefit
       </p>
       {designId && <div className="note" style={{ marginTop: 8 }}>Original design: {designId}</div>}
 
-      <div className="card lift" style={{ marginTop: 20, marginBottom: 16 }}>
+      <form onSubmit={e=>{e.preventDefault();onAssess();}} className="card lift" style={{ marginTop: 20, marginBottom: 16 }}>
         <div className="cap" style={{ marginBottom: 16 }}>AXIAL-LENGTH READINGS · OD / OS</div>
         <div className="grid2" style={{ marginBottom: 18 }}>
           <DateField label="Baseline date" value={fu.baselineDate} onChange={setFuVal("baselineDate")} />
@@ -1085,13 +1155,6 @@ function Screen3({ fu, setFuVal, res, pending, designId, go, onDownload, onRefit
           <NumField label="OD follow-up AL" unit="mm" step="0.01" value={fu.followupOd} onChange={setFuVal("followupOd")} />
           <NumField label="OS baseline AL" unit="mm" step="0.01" value={fu.baselineOs} onChange={setFuVal("baselineOs")} />
           <NumField label="OS follow-up AL" unit="mm" step="0.01" value={fu.followupOs} onChange={setFuVal("followupOs")} />
-        </div>
-        <div className="slider" style={{ maxWidth: "50%" }}>
-          <div className="slider-head">
-            <label>Fallback interval (used when visit dates are unavailable)</label>
-            <span className="slider-val">{fu.interval} <span className="unit">months</span></span>
-          </div>
-          <input type="range" min="1" max="12" step="1" value={fu.interval} onChange={setFuVal("interval")} />
         </div>
         <div className="divider" style={{ margin: "22px 0" }} />
         <div className="cap cap-sm" style={{ marginBottom: 12 }}>REFRACTION</div>
@@ -1115,7 +1178,8 @@ function Screen3({ fu, setFuVal, res, pending, designId, go, onDownload, onRefit
           <TextField label="Adverse event" unit="optional" value={fu.adverseEvent} onChange={setFuVal("adverseEvent")} />
           <TextField label="Intolerance" unit="optional" value={fu.intolerance} onChange={setFuVal("intolerance")} />
         </div>
-      </div>
+        <button className="btn btn-primary" disabled={pending}>{pending ? "Assessing…" : "Assess follow-up"}</button>
+      </form>
 
       <div className="followup-metrics" style={{ marginBottom: 16 }}>
         <Metric cap="OD ΔAL" big={res ? `${fmt(res.eyes.OD.delta_al)} mm` : "—"}
@@ -1177,7 +1241,7 @@ function Screen3({ fu, setFuVal, res, pending, designId, go, onDownload, onRefit
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginTop: 20 }}>
         <span className="note">Report appends this visit to the patient&apos;s progression record.</span>
         <div style={{ display: "flex", gap: 10 }}>
-          <button className="btn btn-ghost" onClick={onDownload}>Download follow-up report ⤓</button>
+          <button className="btn btn-ghost" disabled={!res || pending} onClick={onDownload}>Download follow-up report ⤓</button>
           <button className="btn btn-primary" disabled={!canRefit || refitting} onClick={onRefit}>
             {refitting ? "Generating…" : "Generate Next Recommendation →"}
           </button>

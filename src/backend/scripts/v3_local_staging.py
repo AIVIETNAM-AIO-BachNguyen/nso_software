@@ -88,6 +88,11 @@ def configure(url, extensions=False, multiarm=False):
                     "synthetic-staging",
                 )
     ids = [p["patient_id"] for p in svc.store.list_records("patient")]
+    from clinical_admin_auth import password_hash
+
+    os.environ.setdefault("NSO_CLINICAL_ADMIN_USERNAME", "nso")
+    os.environ.setdefault("NSO_CLINICAL_ADMIN_PASSWORD_HASH", password_hash("2026nso"))
+    os.environ["NSO_CLINICAL_ADMIN_PATIENT_IDS"] = json.dumps(ids)
     expiry = (datetime.now(timezone.utc) + timedelta(hours=8)).isoformat()
     codes = {}
     principals = []

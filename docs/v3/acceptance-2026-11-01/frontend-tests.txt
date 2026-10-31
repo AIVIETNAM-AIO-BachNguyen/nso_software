@@ -1,0 +1,32 @@
+
+> nso-frontend@0.3.0 test
+> node --test tests/*.test.cjs
+
+✔ baseline uses the confirmed visit and never invents follow-up measurements (0.536583ms)
+✔ non-JSON server failures are presented as a recoverable service error (0.307875ms)
+✔ clinical workflow confirms entries, derives follow-up baseline, and never auto-submits edits (53.055625ms)
+✔ changing a confirmed clinical measurement discards the previous recommendation (14.430708ms)
+✔ refit resets approval and uses the new measured visit as its next baseline (29.234ms)
+✔ nested workflow dates survive sibling numeric edits before form submission (4.396333ms)
+✔ study demo renders an invented adjusted result and never sends patient data (12.625ms)
+✔ switching demo module discards a late response and aborts the prior request (1.338083ms)
+✔ demo API errors are visible and the run button becomes usable again (1.01025ms)
+✔ observation import binds the selected case/eye, ignoring identity in uploaded JSON (5.000709ms)
+✔ correction sends the expected revision and preserves measured/imputed provenance (2.709083ms)
+✔ workbenches hide review/deployment controls from researcher-only sessions (0.703583ms)
+✔ training upload uses the locked policy and chosen algorithm rather than file overrides (2.217458ms)
+✔ engineering result view projects permitted fields and does not display returned parameters (0.990208ms)
+✔ extension workbench gates actions by roles and feature flags (1.348625ms)
+✔ manufacturing import binds scope and suppresses protected result fields (3.177208ms)
+✔ shadow workflow error is visible and can be retried without authorizing manufacturing (1.388875ms)
+✔ three-arm view labels partial support and withholds unsupported arm scores (0.484708ms)
+✔ design-value view shows nested held-out metrics with noncausal interpretation (0.292084ms)
+✔ unavailable design evidence does not render fabricated metric tables (0.097166ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 246.480917

@@ -61,6 +61,13 @@ def principal(
     request: Request,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(bearer)] = None,
 ):
+    from clinical_admin_auth import resolve
+
+    if credentials and credentials.scheme.lower() == "bearer":
+        admin = resolve(credentials.credentials)
+        if admin:
+            request.state.research_actor = admin["actor"]
+            return admin
     try:
         principals = json.loads(os.getenv("NSO_V3_PRINCIPALS", "[]"))
         if not isinstance(principals, list):
@@ -155,6 +162,7 @@ def permit(user, permission):
         "design_approver": {"read", "approve"},
         "deployer": {"read", "deploy"},
         "admin": {"*"},
+        "clinical_admin": {"read", "clinical", "approve"},
     }
     if not any(
         permission in roles.get(r, set()) or "*" in roles.get(r, set())

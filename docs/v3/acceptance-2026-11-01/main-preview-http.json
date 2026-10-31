@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "clinical_label_present": true,
+  "checks": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/research",
+      "status": 200
+    },
+    {
+      "path": "/backend/api/health",
+      "status": 200
+    }
+  ]
+}

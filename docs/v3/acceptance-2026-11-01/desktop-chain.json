@@ -1,0 +1,9 @@
+{
+  "scope": {
+    "patient_id": "SYN-external-0",
+    "case_id": "SYN-CASE-external-0",
+    "eye": "OD"
+  },
+  "prediction_id": "PR3-F0D8A3D4F7F740D28DF0606D",
+  "plan_id": "MPL-00414F6EEAA247BA890D71B6"
+}

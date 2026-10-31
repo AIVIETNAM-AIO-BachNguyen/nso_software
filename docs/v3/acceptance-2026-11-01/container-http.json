@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "note": "Unprovisioned production-mode container correctly fails closed; authenticated workflow tested on isolated staging.",
+  "checks": [
+    {
+      "path": "/api/health",
+      "status": 200
+    },
+    {
+      "path": "/api/v3/cases",
+      "status": 503
+    },
+    {
+      "path": "/api/predict",
+      "status": 503
+    }
+  ]
+}

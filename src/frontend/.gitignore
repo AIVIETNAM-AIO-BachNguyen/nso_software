@@ -1,5 +1,6 @@
 /node_modules
 /.next
+/.next-uat/
 /out
 .env*.local
 npm-debug.log*

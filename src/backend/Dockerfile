@@ -4,7 +4,7 @@ WORKDIR /app
 COPY requirements-research.lock.txt .
 RUN pip install --no-cache-dir torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu \
     && pip install --no-cache-dir -r requirements-research.lock.txt
-COPY api.py report.py nso_core.py nso_v2.py research*.py ./
+COPY api.py clinical_admin_auth.py report.py nso_core.py nso_v2.py research*.py ./
 COPY nso ./nso
 COPY scripts ./scripts
 COPY migrations ./migrations

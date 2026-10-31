@@ -1,5 +1,6 @@
 "use client";
 
+import { checkedJson, clinicalError } from "../lib/clinical";
 import { useEffect, useRef, useState } from "react";
 import Demonstrations, { OpticalResults } from "./Demonstrations";
 import StudyRecords from "./StudyRecords";
@@ -7,8 +8,7 @@ import ModelWorkbench from "./ModelWorkbench";
 import ExtensionWorkbench from "./ExtensionWorkbench";
 import OpticalWorkbench from "./OpticalWorkbench";
 
-const API = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
-const PAPER = "https://www.nature.com/articles/s41746-025-02308-4";
+const API = process.env.NEXT_PUBLIC_API_BASE || "/backend";
 const ARMS = [["NONE", "No intervention"], ["SA_ONLY", "SA only"], ["SA_BN", "SA + Blue Noise"], ["SA_BN_FIBER", "SA + Blue Noise + Fiber"], ["OTHER", "Other intervention"]];
 const numberOrNull = (v) => v === "" ? null : Number(v);
 const format = (v, digits = 3) => v == null ? "Unavailable" : Number(v).toFixed(digits);
@@ -65,13 +65,8 @@ export default function ResearchPage() {
         ...(body === undefined ? {} : { "Idempotency-Key": crypto.randomUUID() }) },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
-    const data = await response.json();
-    if (!response.ok) {
-      const detail = data.detail;
-      if (response.status === 401) disconnect();
-      throw new Error(Array.isArray(detail) ? detail.map(d => `${d.loc.slice(1).join(".")}: ${d.msg}`).join("; ")
-        : typeof detail === "object" ? `${detail.code}: ${detail.message}` : detail || "Request failed");
-    }
+    if(response.status === 401) disconnect();
+    const data = await checkedJson(response);
     return data;
   }
 
@@ -92,7 +87,7 @@ export default function ResearchPage() {
     setHistoryLoading(true);
     api(`/cases/${encodeURIComponent(caseId)}/observations?eye=${eye}`, undefined, session, controller.signal)
       .then(data => { if (id === historyRequest.current) { setHistory(data.observations); setIndexDate(data.observations.at(-1)?.visit_at || ""); } })
-      .catch(e => { if (e.name !== "AbortError" && id === historyRequest.current) setError(e.message); })
+      .catch(e => { if (e.name !== "AbortError" && id === historyRequest.current) setError(clinicalError(e)); })
       .finally(() => { if (id === historyRequest.current) setHistoryLoading(false); });
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,7 +108,7 @@ export default function ResearchPage() {
 
   async function action(fn) {
     setBusy(true); setError("");
-    try { await fn(); } catch (e) { setError(e.message); } finally { setBusy(false); }
+    try { await fn(); } catch (e) { setError(clinicalError(e)); } finally { setBusy(false); }
   }
 
   function connect(e) {
@@ -168,44 +163,40 @@ export default function ResearchPage() {
   }
 
   return <main className="wrap research-wrap">
-    <header className="topbar">
+    <header className="topbar research-local-header">
       <div className="brand"><span className="brand-mark" /><span className="brand-name">NSO AI-PC</span><span className="brand-ver">V3 research workspace</span></div>
       <a className="crumb" href="/">← Clinical fitting</a>
     </header>
-    <div className="research-heading"><p className="cap">LONGITUDINAL RESEARCH</p><h1 className="title">Progression, evidence & optical design</h1>
-      <p className="sub">Explore measured eye history, compare research baselines and prepare intervention studies. Results here require research review.</p>
+    <div className="research-heading"><h1 className="title">Research workspace</h1>
+      <p className="sub">Records, analysis and controlled research workflows.</p>
     </div>
-    <aside className="research-notice"><strong>Research only</strong><span>Forecasts and adjusted study reports require independent validation before patient care. Individual clinical benefit is unvalidated. V3.1 arm-informed ranking is available only in governed shadow mode when enabled. No result authorizes prescribing or manufacturing.</span></aside>
-    <section className="research-reference" aria-label="Research reference">
-      <div><span className="cap">RESEARCH REFERENCE</span><p><a href={PAPER} target="_blank" rel="noreferrer">AI-guided personalized predictions on myopia progression and interventions ↗</a></p>
-        <span className="note">Liu S et al. · npj Digital Medicine · 2026 · DOI 10.1038/s41746-025-02308-4</span></div>
-      <p className="note">The NSO baseline implementation is independent. The published model and its reported performance have not been reproduced here.</p>
-    </section>
-    <div className="research-mode" aria-label="Data source">
+    <div className="research-toolbar"><div className="research-mode" aria-label="Data source">
       <button className={`btn ${mode === "demo" ? "btn-primary" : "btn-ghost"}`} disabled={busy} onClick={() => { disconnect(); setMode("demo"); setIndexDate("2026-01-01"); }}>Synthetic demonstration</button>
       <button className={`btn ${mode === "live" ? "btn-primary" : "btn-ghost"}`} disabled={busy} onClick={() => { disconnect(); setMode("live"); }}>Authorized research data</button>
-      <span className="note">{mode === "demo" ? "Invented fixture · no patient data · results are not saved" : "Access is limited to patients assigned to your research session."}</span>
+      <span className="note">{mode === "demo" ? "Synthetic data · unsaved results" : "Assigned patients only."}</span>
+    </div>
+    <div className="research-controls">
+      <label className="field">Eye<select aria-label="Eye" value={eye} disabled={busy} onChange={e => { invalidate(); setEye(e.target.value); }}><option>OD</option><option>OS</option></select></label>
+    </div>
     </div>
     {mode === "live" && !session && <form className="card research-session" onSubmit={connect}>
       <label className="field">Research session credential<input aria-label="Research session credential" type="password" autoComplete="off" value={token} onChange={e => setToken(e.target.value)} required /></label>
       <button className="btn btn-primary" disabled={busy || !token}>Connect</button>
-      <span className="note">Provided by the study administrator. Kept in memory for this page only.</span>
+      <span className="note">Use the access code provided for your study.</span>
     </form>}
     {connected && <section className="research-session card">
       <label className="field">Case<select aria-label="Research case" value={caseId} disabled={busy} onChange={e => setCaseId(e.target.value)}>{cases.length === 0 && <option value="">No assigned cases</option>}{cases.map(c => <option key={c.case_id} value={c.case_id}>{c.patient_id} · {c.case_id}</option>)}</select></label>
       <button className="btn btn-ghost" disabled={busy} onClick={disconnect}>Disconnect</button>
     </section>}
     {error && <p className="err" role="alert">{error}</p>}
-    <nav className="research-tabs" aria-label="Research modules">{[["forecast", "Progression forecast"], ["cohort", "Intervention studies"], ["optics", "Optical optimization"]].map(([key, label]) =>
+    <nav className="research-tabs" aria-label="Research modules">{[["forecast", "Patient forecasts"], ["records", "Study records"], ["cohort", "Study analysis"], ["optics", "Optical design"], ["models", "Model governance"], ["manufacturing", "Manufacturing"], ["adaptive", "Shadow research"]].map(([key, label]) =>
       <button key={key} aria-current={tab === key ? "page" : undefined} className={tab === key ? "active" : ""} disabled={busy} onClick={() => setTab(key)}>{label}</button>)}</nav>
-    <div className="research-controls">
-      <label className="field">Eye<select aria-label="Eye" value={eye} disabled={busy} onChange={e => { invalidate(); setEye(e.target.value); }}><option>OD</option><option>OS</option></select></label>
-      <span className="note">Right and left eye histories are kept separate.</span>
-    </div>
+    {!["forecast","cohort","optics"].includes(tab) && !connected && <section className="card empty-state"><p className="eyebrow">AUTHORIZED WORKSPACE</p><h2>Connect to continue</h2><p>Choose authorized research data above and connect with your study access code. This area uses assigned records and role-based permissions.</p></section>}
+
 
     {tab === "forecast" && <>
-      <section className="card research-section"><div className="research-section-head"><h2>Natural progression research forecasts</h2><span className="research-state">{health?.features.npm_enabled ? "Research enabled" : "Demo available · patient forecasts disabled"}</span></div>
-        <p className="research-copy">Compare a carry-forward reference with a line fitted to this eye’s measured history. These are independent NSO comparators, not the published MPPM model. Trained research models require independent approval; their intervals use held-out patient calibration.</p>
+      <section className="card research-section"><div className="research-section-head"><h2>Natural progression research forecasts</h2><span className="research-state">{health?.features?.npm_enabled ? "Research enabled" : "Demo available · patient forecasts disabled"}</span></div>
+        <p className="research-copy">Choose a baseline or an approved model to forecast SE and axial length.</p>
         <div className="grid2">
           <label className="field">Forecast model<select aria-label="Baseline model" value={model} disabled={busy} onChange={e => { invalidate(); setModel(e.target.value); }}><option value="npm-history-linear-v1">Historical linear trend · 2+ measured visits</option><option value="npm-carry-forward-v1">Last measured value · 1+ measured visit</option>{availableModels.map(m=><option key={m.model_id} value={m.model_id}>Approved research model · {m.model_id}</option>)}</select></label>
           <label className="field">Frozen index date<input type="date" aria-label="Frozen index date" required value={indexDate} disabled={mode === "demo" || busy} onChange={e => { invalidate(); setIndexDate(e.target.value); }} /></label>
@@ -213,7 +204,7 @@ export default function ResearchPage() {
         {connected && <label className="field">Age at index · required for trained population models<input type="number" min="3" max="100" step=".1" value={indexAge} onChange={e=>{invalidate();setIndexAge(e.target.value);}} /></label>}
         {connected && <button className="btn btn-ghost" disabled={busy} onClick={()=>action(async()=>{const data=await api("/models/available");setAvailableModels(data.models.filter(m=>m.active));})}>Refresh approved research models</button>}
         {connected && <label className="research-check"><input type="checkbox" checked={untreated} disabled={busy} onChange={e => { invalidate(); setUntreated(e.target.checked); }} />I have confirmed that the input history is untreated. Recorded treatment exposures are checked separately.</label>}
-        <div className="research-actions"><button className="btn btn-primary" disabled={busy || historyLoading || (mode === "live" && (!scope || !untreated || !indexDate || !health?.features.npm_enabled))} onClick={() => action(runForecast)}>{busy ? "Working…" : mode === "demo" ? "Run synthetic forecast" : "Run research forecast"}</button>{forecast && <button className="btn btn-ghost" onClick={() => downloadResult(forecast, "nso-research-forecast.json")}>Export result</button>}</div>
+        <div className="research-actions"><button className="btn btn-primary" disabled={busy || historyLoading || (mode === "live" && (!scope || !untreated || !indexDate || !health?.features?.npm_enabled))} onClick={() => action(runForecast)}>{busy ? "Working…" : mode === "demo" ? "Run synthetic forecast" : "Run research forecast"}</button>{forecast && <button className="btn btn-ghost" onClick={() => downloadResult(forecast, "nso-research-forecast.json")}>Export result</button>}</div>
       </section>
 
       <section className="card research-section"><h2>{mode === "demo" ? "Synthetic visit history" : "Recorded visit history"}</h2>
@@ -243,8 +234,7 @@ export default function ResearchPage() {
     </>}
 
     {tab === "cohort" && <section className="card research-section"><div className="research-section-head"><h2>Compare study groups</h2><span className="research-state">Research analysis · locked protocol required</span></div>
-      <p className="research-copy">Freeze a cohort with a defined comparator, index and analysis plan. Accepted measured AL at baseline and around 12 months is required. Reports average both eyes within each patient before summarizing an arm.</p>
-      <p className="research-copy">Start with a sample study below. For your own study, connect an assigned research session and register its protocol and baseline records. Individual treatment benefits require separate validation.</p>
+      <p className="research-copy">Compare measured axial-length change at 12 months using a frozen cohort and analysis plan.</p>
       {mode === "demo" && <Demonstrations kind="cohort" />}
       {connected && <form onSubmit={runCohort}><div className="grid2">
         <label className="field">Registered protocol ID · needed for adjusted analysis<input type="text" value={cohort.protocol_id} onChange={e=>setCohort({...cohort,protocol_id:e.target.value})} /></label>
@@ -255,27 +245,28 @@ export default function ResearchPage() {
       </div><label className="field research-plan">Locked analysis plan<textarea required minLength={10} maxLength={4000} rows={4} value={cohort.analysis_plan} onChange={e => setCohort({ ...cohort, analysis_plan: e.target.value })} /></label>
         <fieldset className="research-members"><legend>Include cases · selected eye {eye}</legend>{cases.map(c => <label className="research-check" key={c.case_id}><input type="checkbox" checked={members.includes(c.case_id)} onChange={e => setMembers(e.target.checked ? [...members, c.case_id] : members.filter(id => id !== c.case_id))} />{c.patient_id} · {c.case_id}</label>)}</fieldset>
         <p className="note">Follow-up window: 12 calendar months ±30 days. Missing measurements, switching and discontinuation are counted as exclusions; these summaries do not resolve their bias.</p>
-        <button className="btn btn-primary" disabled={busy || members.length < 2 || cohort.comparator === cohort.intervention || !health?.features.ipm_research_enabled}>Freeze cohort & generate report</button>
+        <button className="btn btn-primary" disabled={busy || members.length < 2 || cohort.comparator === cohort.intervention || !health?.features?.ipm_research_enabled}>Freeze cohort & generate report</button>
       </form>}
       {armReport && <div aria-live="polite"><h3>Frozen cohort report</h3><div className="research-table-scroll"><table className="research-table"><thead><tr><th>Arm</th><th>Patients</th><th>Eyes</th><th>Mean observed Δ AL (mm)</th></tr></thead><tbody>{armReport.groups.map(g => <tr key={g.arm}><td>{ARMS.find(a => a[0] === g.arm)?.[1]}</td><td>{g.patients}</td><td>{g.eyes}</td><td>{format(g.mean_observed_delta_al_mm)}</td></tr>)}</tbody></table></div><p className="note">Excluded eyes: {armReport.excluded_eyes}. These unadjusted summaries do not identify individual benefit.</p><div className="research-actions"><button className="btn btn-ghost" onClick={() => downloadResult(armReport, "nso-arm-report.json")}>Export report</button><button className="btn btn-primary" disabled={busy || !armReport.protocol_id} onClick={()=>action(async()=>setAdjustedReport(await api("/ipm/analyze", {cohort_id:armReport.cohort_id,method:armReport.assignment==="randomized"?"randomized_ancova":"observational_aipw",bootstrap_reps:200,seed:17,unmeasured_bias_bound_mm:.1}))) }>Run protocol-based adjusted comparison</button></div></div>}
       {adjustedReport && <div aria-live="polite"><h3>Adjusted research comparison</h3><p className="research-copy">Intervention minus comparator: {format(adjustedReport.effect_mm)} mm. 95% interval: {adjustedReport.interval_95_mm?.map(v=>format(v)).join(" to ") || "Withheld: insufficient overlap"}.</p><p className="note">{adjustedReport.patients} patients · {adjustedReport.method} · {adjustedReport.missing_endpoint_eyes} missing endpoint eyes. Interpretation depends on the locked protocol and its assumptions; assignment has not been independently verified by the software.</p><button className="btn btn-ghost" onClick={()=>downloadResult(adjustedReport,"nso-adjusted-study-report.json")}>Export adjusted report</button></div>}
     </section>}
 
     {tab === "optics" && <section className="card research-section"><div className="research-section-head"><h2>Optical optimization</h2><span className="research-state">Reference simulator · lens calibration required</span></div>
-      <p className="research-copy">Explore feasible phase-screen designs with a scalar diffraction reference engine. Optical engineers can register a protected design envelope and check manufacturing perturbations. Approval requires independent measured-lens calibration.</p>
+      <p className="research-copy">Search designs within an engineering envelope and inspect optical performance.</p>
       {mode === "demo" && <Demonstrations kind="optics" />}
       {connected && scope ? <form onSubmit={e => { e.preventDefault(); action(async () => { const submitted = await api("/optimizer/run", { ...scope, envelope_id: envelope, objective_version: "optical-quality-v1", seed: 1, candidate_budget: 32 }); setJob(await api(`/optimizer/${submitted.run_id}`)); }); }}>
         <label className="field">Engineering envelope reference<input type="text" required value={envelope} onChange={e => setEnvelope(e.target.value)} /></label>
-        <button className="btn btn-ghost" disabled={busy || !health?.features.optimizer_enabled}>Run reference optical search</button>
+        <button className="btn btn-ghost" disabled={busy || !health?.features?.optimizer_enabled}>Run reference optical search</button>
       </form> : <p className="research-empty">An authorized engineering session is required to submit and inspect optimization jobs.</p>}
       {job && <div aria-live="polite"><h3>Job {job.status}</h3><p className="research-copy">{job.message || job.calibration_status || "The asynchronous job is queued."}</p><p className="note">{job.run_id}</p>{job.pareto_candidates?.length > 0 && <OpticalResults candidates={job.pareto_candidates} />}{job.status === "queued" && <button className="btn btn-ghost" disabled={busy} onClick={() => action(async () => setJob(await api(`/optimizer/${job.run_id}`)))}>Refresh job status</button>}</div>}
     </section>}
-    {connected && scope && <StudyRecords key={caseId+"|"+eye} scope={scope} history={history} api={api} onProtocol={id=>setCohort({...cohort,protocol_id:id})} refresh={async()=>{const captured=caseId+"|"+eye;if(currentScope.current!==captured)return;const data=await api(`/cases/${encodeURIComponent(caseId)}/observations?eye=${eye}`);if(currentScope.current===captured){invalidate();setHistory(data.observations);}}} />}
-    {connected && sessionInfo && <ModelWorkbench key={sessionInfo.actor} api={api} roles={sessionInfo.roles} />}
+    {tab === "records" && connected && scope && <StudyRecords key={caseId+"|"+eye} scope={scope} history={history} api={api} onProtocol={id=>setCohort({...cohort,protocol_id:id})} refresh={async()=>{const captured=caseId+"|"+eye;if(currentScope.current!==captured)return;const data=await api(`/cases/${encodeURIComponent(caseId)}/observations?eye=${eye}`);if(currentScope.current===captured){invalidate();setHistory(data.observations);}}} />}
+    {tab === "models" && connected && sessionInfo && <ModelWorkbench key={sessionInfo.actor} api={api} roles={sessionInfo.roles} />}
+    {tab === "models" && connected && sessionInfo && !sessionInfo.roles.some(r=>["admin","validator","deployer"].includes(r)) && <p className="card research-empty">Your role can use approved models. Model review and deployment require a validator or deployment role.</p>}
     {connected && sessionInfo && tab === "optics" && <OpticalWorkbench key={sessionInfo.actor} api={api} roles={sessionInfo.roles} onEnvelope={setEnvelope} />}
     {mode === "demo" && tab === "forecast" && <section className="card research-section"><Demonstrations kind="training" /></section>}
-    {connected && scope && sessionInfo && <ExtensionWorkbench key={sessionInfo.actor+"|"+caseId+"|"+eye} api={api} roles={sessionInfo.roles} scope={scope} manufacturingEnabled={health?.features.manufacturing_enabled} adaptiveEnabled={health?.features.adaptive_shadow_enabled} />}
-    <footer className="medical-disclaimer">Research software · synthetic examples are not evidence of clinical efficacy · V3.1 adaptive ranking requires prospective validation and governance approval.</footer>
+    {["manufacturing","adaptive"].includes(tab) && connected && scope && sessionInfo && <ExtensionWorkbench workflowGroup={tab} key={tab+"|"+sessionInfo.actor+"|"+caseId+"|"+eye} api={api} roles={sessionInfo.roles} scope={scope} manufacturingEnabled={health?.features?.manufacturing_enabled} adaptiveEnabled={health?.features?.adaptive_shadow_enabled} />}
+    <footer className="medical-disclaimer">Research use only · not for clinical or manufacturing decisions.</footer>
   </main>;
 }
 

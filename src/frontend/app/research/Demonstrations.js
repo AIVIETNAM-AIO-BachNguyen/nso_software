@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const API = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
+const API = process.env.NEXT_PUBLIC_API_BASE || "/backend";
 const number = value => value == null ? "Not estimated" : Number(value).toFixed(3);
 
 export default function Demonstrations({ kind }) {

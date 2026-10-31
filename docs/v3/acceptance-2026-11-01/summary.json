@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-01",
+  "backend": {
+    "passed": 598,
+    "failed": 0,
+    "skipped": 1,
+    "postgres": "isolated PostgreSQL 16 UTF8"
+  },
+  "frontend": {
+    "passed": 20,
+    "failed": 0
+  },
+  "production_build": "PASS",
+  "http_suites": {
+    "research": 23,
+    "manufacturing": 32,
+    "multiarm": 21
+  },
+  "docker_build": "PASS",
+  "container_smoke": "PASS - health and fail-closed only",
+  "desktop_uat": "PARTIAL - completed cases listed in REPORT.md; browser access disabled before completion",
+  "remote_ci": "NOT RUN",
+  "clinical_validation": "NOT ESTABLISHED",
+  "main_preview": "http://127.0.0.1:3100",
+  "test_services": "STOPPED; main local frontend/backend also stopped at user request before Git handoff"
+}

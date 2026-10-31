@@ -1,3 +1,5 @@
+> **1 November 2026 software acceptance:** [current local test report](docs/v3/acceptance-2026-11-01/REPORT.md): 598 backend tests passed with isolated PostgreSQL, 20 frontend tests passed, production build and local Docker smoke passed. Real-data optical/clinical validation and remote release acceptance remain outstanding.
+
 > **29 October 2026:** Three-arm DR shadow ranking and protected design-parameter predictive-value analysis are available. See [current implementation](docs/v3/MULTIARM_COMPLETION_2026-10-29.md) and [validation](docs/v3/MULTIARM_VALIDATION.md).
 
 > **28 October 2026 update:** V3 research manufacturing trace and a governed V3.1 shadow prototype are implemented. See [implementation and validation](docs/v3/V3_MANUFACTURING_V31_COMPLETION_2026-10-28.md). Reference recipes are not machine toolpaths; adaptive output never authorizes manufacturing or treatment.

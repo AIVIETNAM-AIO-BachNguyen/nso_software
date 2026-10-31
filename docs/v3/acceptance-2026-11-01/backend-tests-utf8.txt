@@ -1,0 +1,18 @@
+........................................................................ [ 12%]
+........................................................................ [ 24%]
+....................................s................................... [ 36%]
+........................................................................ [ 48%]
+........................................................................ [ 60%]
+........................................................................ [ 72%]
+........................................................................ [ 84%]
+........................................................................ [ 96%]
+.......................                                                  [100%]
+=============================== warnings summary ===============================
+.venv312/lib/python3.12/site-packages/starlette/testclient.py:45
+  /Users/bachng/Coding/nso_software/.venv312/lib/python3.12/site-packages/starlette/testclient.py:45: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] src/backend/test_nso_package.py:673: varies only once element height crosses its threshold
+598 passed, 1 skipped, 1 warning in 204.98s (0:03:24)

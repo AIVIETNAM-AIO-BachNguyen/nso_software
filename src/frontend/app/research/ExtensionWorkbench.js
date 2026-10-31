@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import RecordFields, { emptyTemplate } from "../components/RecordFields";
 import MultiArmResults from "./MultiArmResults";
 
 const ACTIONS = [
@@ -40,9 +41,10 @@ function template(path, scope) {
   return templates[path];
 }
 
-export default function ExtensionWorkbench({ api, roles, scope, manufacturingEnabled, adaptiveEnabled }) {
-  const allowed = ACTIONS.filter(([, path, needed]) => (path.startsWith("/adaptive/") ? adaptiveEnabled : manufacturingEnabled) && (roles.includes("admin") || needed.some(r => roles.includes(r))));
+export default function ExtensionWorkbench({ api, roles, scope, manufacturingEnabled, adaptiveEnabled, workflowGroup }) {
+  const allowed = ACTIONS.filter(([, path, needed]) => (!workflowGroup || (workflowGroup === "adaptive" ? path.startsWith("/adaptive/") : path.startsWith("/manufacturing/"))) && (path.startsWith("/adaptive/") ? adaptiveEnabled : manufacturingEnabled) && (roles.includes("admin") || needed.some(r => roles.includes(r))));
   const [kind, setKind] = useState(allowed[0]?.[1] || "");
+  const [draft, setDraft] = useState(null);
   const [file, setFile] = useState(null), [result, setResult] = useState(null), [error, setError] = useState(""), [busy, setBusy] = useState(false);
   const [modelId, setModelId] = useState("");
   const [shadowId, setShadowId] = useState("");
@@ -53,28 +55,29 @@ export default function ExtensionWorkbench({ api, roles, scope, manufacturingEna
     const link = document.createElement("a"); link.href = url; link.download = "synthetic-workflow-template.json"; link.click(); URL.revokeObjectURL(url);
   }
   return <section className="card research-section extension-workbench" aria-label="Manufacturing and adaptive research">
-    <h2>Manufacturing thread & V3.1 shadow research</h2>
+    <h2>{workflowGroup === "adaptive" ? "Shadow research workflow" : "Manufacturing workflow"}</h2>
     <p className="note">Reference recipes preserve reproducibility and require engineering qualification before machine use. Shadow rankings never authorize treatment or manufacturing. Templates contain invented values.</p>
     {!manufacturingEnabled && !adaptiveEnabled && <p role="status">These workflows are disabled by server feature flags.</p>}
+    {allowed.length === 0 && (manufacturingEnabled || adaptiveEnabled) && <p className="research-empty">Your session has no submission permission for this workflow. Inspection remains subject to your assigned role.</p>}
     {allowed.length > 0 && <form onSubmit={e => { e.preventDefault(); run(async () => {
-      if (!file) throw new Error("Choose a workflow JSON file.");
-      if (file.size > 8_000_000) throw new Error("The maximum upload is 8 MB.");
-      const data = JSON.parse(await file.text());
+      if (file && file.size > 8_000_000) throw new Error("The maximum upload is 8 MB.");
+      const data = file ? JSON.parse(await file.text()) : (draft || emptyTemplate(template(selected[1], scope)));
       if (["/manufacturing/plans", "/adaptive/shadow"].includes(selected[1])) Object.assign(data, scope);
       return api(selected[1], data);
     }); }}>
-      <label className="field">Workflow<select aria-label="Workflow" disabled={busy} value={selected[1]} onChange={e => { setKind(e.target.value); setFile(null); setResult(null); setError(""); }}>{allowed.map(([label, path]) => <option key={path} value={path}>{label}</option>)}</select></label>
+      <label className="field">Workflow<select aria-label="Workflow" disabled={busy} value={selected[1]} onChange={e => { setKind(e.target.value); setDraft(null); setFile(null); setResult(null); setError(""); }}>{allowed.map(([label, path]) => <option key={path} value={path}>{label}</option>)}</select></label>
       <p className="note">{selected[3]}</p>
-      <button type="button" className="btn btn-ghost" onClick={download}>Download synthetic template</button>
-      <label className="field">Workflow JSON<input key={selected[1]} type="file" required accept=".json,application/json" disabled={busy} onChange={e => setFile(e.target.files?.[0] || null)} /></label>
-      <button className="btn btn-primary" disabled={busy || !file}>Submit research workflow</button>
+      <fieldset disabled={!!file} className="workflow-form-fields"><legend>Workflow record</legend><RecordFields schema={template(selected[1],scope)} value={draft || emptyTemplate(template(selected[1],scope))} onChange={setDraft} locked={["patient_id","case_id","eye"]} /></fieldset>
+      <details className="research-details"><summary>Advanced · import a prepared JSON record</summary><button type="button" className="btn btn-ghost" onClick={download}>Download synthetic template</button>
+      <label className="field">Workflow JSON<input key={selected[1]} type="file" accept=".json,application/json" disabled={busy} onChange={e => setFile(e.target.files?.[0] || null)} /></label>
+      </details><button className="btn btn-primary" disabled={busy}>Submit research workflow</button>
     </form>}
     <div className="row">
-      {manufacturingEnabled && <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => run(() => api(`/manufacturing/cases/${encodeURIComponent(scope.case_id)}/trace`))}>Inspect manufacturing trace</button>}
-      {adaptiveEnabled && <form onSubmit={e => { e.preventDefault(); run(() => api(`/adaptive/models/${encodeURIComponent(modelId)}/monitor`)); }}><label className="field">Adaptive model ID<input type="text" required value={modelId} onChange={e => setModelId(e.target.value)} /></label><button className="btn btn-ghost" disabled={busy}>Inspect shadow monitoring</button><button type="button" className="btn btn-ghost" disabled={busy || !modelId} onClick={() => run(() => api(`/adaptive/models/${encodeURIComponent(modelId)}`))}>Inspect held-out validation</button><button type="button" className="btn btn-ghost" disabled={busy || !modelId} onClick={() => run(() => api(`/adaptive/models/${encodeURIComponent(modelId)}/design-analysis`))}>Inspect design parameter value</button></form>}
+      {workflowGroup !== "adaptive" && manufacturingEnabled && <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => run(() => api(`/manufacturing/cases/${encodeURIComponent(scope.case_id)}/trace`))}>Inspect manufacturing trace</button>}
+      {workflowGroup !== "manufacturing" && adaptiveEnabled && <form onSubmit={e => { e.preventDefault(); run(() => api(`/adaptive/models/${encodeURIComponent(modelId)}/monitor`)); }}><label className="field">Adaptive model ID<input type="text" required value={modelId} onChange={e => setModelId(e.target.value)} /></label><button className="btn btn-ghost" disabled={busy}>Inspect shadow monitoring</button><button type="button" className="btn btn-ghost" disabled={busy || !modelId} onClick={() => run(() => api(`/adaptive/models/${encodeURIComponent(modelId)}`))}>Inspect held-out validation</button><button type="button" className="btn btn-ghost" disabled={busy || !modelId} onClick={() => run(() => api(`/adaptive/models/${encodeURIComponent(modelId)}/design-analysis`))}>Inspect design parameter value</button></form>}
     </div>
-    {adaptiveEnabled && <form onSubmit={e=>{e.preventDefault();run(()=>api(`/adaptive/shadows/${encodeURIComponent(shadowId)}`));}}><label className="field">Shadow record ID<input type="text" required value={shadowId} onChange={e=>setShadowId(e.target.value)} /></label><button className="btn btn-ghost" disabled={busy || !shadowId}>Inspect shadow record</button></form>}
+    {workflowGroup !== "manufacturing" && adaptiveEnabled && <form onSubmit={e=>{e.preventDefault();run(()=>api(`/adaptive/shadows/${encodeURIComponent(shadowId)}`));}}><label className="field">Shadow record ID<input type="text" required value={shadowId} onChange={e=>setShadowId(e.target.value)} /></label><button className="btn btn-ghost" disabled={busy || !shadowId}>Inspect shadow record</button></form>}
     {error && <p role="alert" className="research-error">{error}</p>}
-    {result && <div role="status"><h3>Research workflow result</h3><MultiArmResults result={result} /><p className="note">Clinical use and automatic manufacturing remain disabled.</p><pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", maxHeight: "32rem", overflowY: "auto" }}>{JSON.stringify(result, (key, value) => ["parameters", "tolerances", "qc_requirements", "support_z", "support_arms", "features"].includes(key) ? undefined : value, 2)}</pre></div>}
+    {result && <div role="status"><h3>Research workflow result</h3><MultiArmResults result={result} /><p className="note">Clinical use and automatic manufacturing remain disabled.</p><details><summary>Technical record details</summary><pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", maxHeight: "32rem", overflowY: "auto" }}>{JSON.stringify(result, (key, value) => ["parameters", "tolerances", "qc_requirements", "support_z", "support_arms", "features"].includes(key) ? undefined : value, 2)}</pre></details></div>}
   </section>;
 }

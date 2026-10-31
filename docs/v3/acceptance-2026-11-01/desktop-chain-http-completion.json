@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "scope": "Completes the same synthetic plan independently reviewed in desktop UI; lot/QC/exposure/outcome final path performed by HTTP.",
+  "checks": [
+    {
+      "path": "/manufacturing/lots",
+      "actor": "operator",
+      "status": 201
+    },
+    {
+      "path": "/manufacturing/qc",
+      "actor": "operator",
+      "status": 200
+    },
+    {
+      "path": "/manufacturing/exposures",
+      "actor": "researcher",
+      "status": 200
+    },
+    {
+      "path": "/manufacturing/outcomes",
+      "actor": "researcher",
+      "status": 200
+    }
+  ],
+  "lot_id": "LOT-5CA8F1EE45BB4A12BB20",
+  "outcome": {
+    "lot_id": "LOT-5CA8F1EE45BB4A12BB20",
+    "plan_id": "MPL-00414F6EEAA247BA890D71B6",
+    "prediction_id": "PR3-F0D8A3D4F7F740D28DF0606D",
+    "outcome_id": "OUT3-FF85BCA9E6C54F60B709CCE6",
+    "followup_visit_id": "VIS-3BA0F0631F8E478FBE86",
+    "followup_visit_link_id": "MVIS-BD9937E8D28043378C114408",
+    "patient_id": "SYN-external-0",
+    "case_id": "SYN-CASE-external-0",
+    "eye": "OD",
+    "primary_endpoint_eligible": true,
+    "mode": "synthetic_rehearsal",
+    "clinical_use_allowed": false,
+    "model_approval_granted": false,
+    "record_id": "MVAL-42F8921E6DD54D1AAB2A0247",
+    "schema_version": "3.0.0-research.1",
+    "created_at": "2026-10-31T17:28:01+00:00",
+    "created_by": "researcher"
+  }
+}

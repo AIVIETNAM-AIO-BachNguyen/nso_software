@@ -297,7 +297,9 @@ class ClinicalDigitalThread:
     ) -> Dict[str, Any]:
         parameter_hash = _hash(parameters)
         recipe_id = _stable("RCP", {"design_id": design_id})
-        versions = [r for r in self.store.list_records("recipe_version") if r["recipe_id"] == recipe_id]
+        # Historical/imported records can predate recipe identity. They cannot
+        # belong to this recipe and must not break an unrelated clinical fit.
+        versions = [r for r in self.store.list_records("recipe_version") if r.get("recipe_id") == recipe_id]
         version_number = len(versions) + 1
         recipe_version_id = _stable("RCV", {
             "recipe_id": recipe_id, "version": version_number, "hash": parameter_hash,

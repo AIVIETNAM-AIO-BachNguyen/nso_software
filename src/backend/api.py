@@ -51,6 +51,8 @@ import research_operations_api  # noqa: F401
 import research_extension_api  # noqa: F401
 import research_demo_api  # noqa: F401
 app.include_router(research_router)
+from clinical_admin_auth import router as clinical_auth_router
+app.include_router(clinical_auth_router)
 
 # CORS: allow any *.vercel.app (production + preview deploys) and localhost.
 # For a custom domain later, add it via ALLOWED_ORIGINS (comma-separated).
